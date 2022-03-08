@@ -4,6 +4,7 @@
 
 ## Resources
 - https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes  # Keyword Expansion
+- https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#filters_b
 
 ## Example HG keyword expansion:
 - // $Id: ctrl.h default 756f9b4b9011 2017/10/27 00:36:18 rwmitchell $
