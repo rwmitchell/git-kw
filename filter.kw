@@ -1,10 +1,20 @@
 #!/bin/sh
+
+# when invoked from git, there are no cmdline args
+
 ID="Keep it going"
 FN=$1
 FQ=$PWD/$FN
 DT=$(date)
 
-sed "s#\$Id.*\$#\$Id: $ID \$#; \
-     s#\$Source.*\$#\$Source: $FQ \$#; \
-     s/\$Date.*\$/\$Date: $DT \$/"     \
-     < $FN
+if [[ $FN ]]; then
+
+  sed "s#\$Id.*\$#\$Id: $ID \$#; \
+       s#\$Source.*\$#\$Source: $FQ \$#; \
+       s/\$Date.*\$/\$Date: $DT \$/"     \
+       < $FN
+else
+  sed "s#\$Id.*\$#\$Id: $ID \$#; \
+       s#\$Source.*\$#\$Source: $FQ \$#; \
+       s/\$Date.*\$/\$Date: $DT \$/"
+fi
