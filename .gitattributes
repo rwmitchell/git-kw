@@ -1,2 +1,5 @@
-*.txt ident
-*.txt filter=kw
+*.txt    ident
+*.txt    filter=kw
+*.sh     filter=kw
+Makefile filter=kw
+

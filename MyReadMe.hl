@@ -26,3 +26,27 @@
 	- setting 'smudge' to 'cat' resulted in getting the original file back on a 'git restore'
 	- setting 'smudge' to 'filter.kw' updates keywords on 'restore' but does not appear to update on 'add' or 'commit'
 	- 'clean' should be run when files are staged...which is 'add', right?
+
+## Observations
+- clone new repo to Moira
+	- keywords were not current
+	- .git/config does not contain filter commands
+	- suggests:
+		- keywords were not re-expanded on checkout
+		- updated keywords not always saved?  clean vs smudge
+
+## Implementation
+- repo specific
+	- put filter.kw in each repo
+	- allows local customization
+- global
+	- put in ~/Build/bin
+		- Names?
+			+ gitfilter.kw ?
+			+ gitkwfilter.sh
+			+ gitkwfilter
+	- should this have a regular Makefile and Source ?
+
+## New Commands:
+	- git config --global filter.kw.smudge gitkwfilter
+	- git config --global filter.kw.clean  gitkwfilter
