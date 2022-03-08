@@ -16,7 +16,12 @@
 	- *.txt filter=kw
 - Enable filter
 	- git config filter.kw.smudge ./filter.kw
+	- git config filter.kw.clean  ./filter.kw     # testing
 
 ## Discussion
 - the filter should be in $PATH but can be hardcoded as done above
 - filter does not get cmdline args, need to find method for getting filename
+- have tried setting filter to either smudge, clean, and both
+	- setting 'smudge' to 'cat' resulted in getting the original file back on a 'git restore'
+	- setting 'smudge' to 'filter.kw' updates keywords on 'restore' but does not appear to update on 'add' or 'commit'
+	- 'clean' should be run when files are staged...which is 'add', right?
