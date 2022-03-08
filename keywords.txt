@@ -1,6 +1,9 @@
-#ident "$Id: mykeywords 2022-03-08 10:57:36 -0500  (HEAD -> main, origin/main, origin/HEAD) 87c549b Richard W. Mitchell rwmitchell@mac.com $
+#ident "$Id$
 #ident "$Source: /tmp/git/mykeywords/ $
-#ident "$Date: 2022-03-08 10:57:36 -0500 $
+#ident "$Date: 2022-03-08 11:21:00 -0500 $
+
+This is from: https://git-memo.readthedocs.io/en/latest/git_archive.html
+but there must be more to it as nothing expanded
 
 @date    $Format: %ci$
 @version $Format: %h$
