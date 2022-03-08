@@ -1,0 +1,10 @@
+#!/bin/sh
+ID="Keep it going"
+FN=$1
+FQ=$PWD/$FN
+DT=$(date)
+
+sed "s#\$Id.*\$#\$Id: $ID \$#; \
+     s#\$Source.*\$#\$Source: $FQ \$#; \
+     s/\$Date.*\$/\$Date: $DT \$/"     \
+     < $FN
