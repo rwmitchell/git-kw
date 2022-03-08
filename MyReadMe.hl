@@ -1,0 +1,22 @@
+# Git Keywords
+## Goal
+- Provide same or similar keyword substitution used in HG
+
+## Resources
+- https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes  # Keyword Expansion
+
+## Example HG keyword expansion:
+- // $Id: ctrl.h default 756f9b4b9011 2017/10/27 00:36:18 rwmitchell $
+- // $Source: /Users/rwmitch1/src/hg/rwm/latlon/Source/ctrl.h $
+
+## Setup
+- Create a filter
+	- 'filter.kw' is an example filter using sed
+- Add filter to .gitattibutes:
+	- *.txt filter=kw
+- Enable filter
+	- git config filter.kw.smudge ./filter.kw
+
+## Discussion
+- the filter should be in $PATH but can be hardcoded as done above
+- filter does not get cmdline args, need to find method for getting filename
