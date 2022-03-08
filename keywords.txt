@@ -1,6 +1,6 @@
 #ident "$Id$
 #ident "$Source: /tmp/git/mykeywords/ $
-#ident "$Date: 2022-03-08 11:21:00 -0500 $
+#ident "$Date: 2022-03-08 11:35:04 -0500 $
 
 This is from: https://git-memo.readthedocs.io/en/latest/git_archive.html
 but there must be more to it as nothing expanded
@@ -9,3 +9,4 @@ but there must be more to it as nothing expanded
 @version $Format: %h$
 
 Text body for testing
+Trying: git stage
