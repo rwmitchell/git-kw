@@ -61,4 +61,5 @@
 - 'workarea' needs to have expanded keywords
 - 'committed' files need to be clean/unexpanded
 	- it does not make sense to have $Source expanded to a local path when working on multiple systems
-
+- 'smudge' filter run on checkout
+- 'clean'  filter run on stage

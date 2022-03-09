@@ -1,5 +1,5 @@
-# $Id: mykeywords 2022-03-08 12:17:31 -0500  (HEAD -> main, origin/main, origin/HEAD) d757e7a Richard W. Mitchell rwmitchell@mac.com $
-# $Source: /Users/rwmitchell/git/RWM/mykeywords $
+# $Id$
+# $Source$
 ######################################################################
 # You'll need these:
 #    make.darwin-i386
@@ -82,7 +82,8 @@ DST_PROGS =          \
 
 # All Scripts (basename, no extensions ie: foo, not foo.pl)
 DST_SCRPT =          \
-	$(DST)/gitkwfilter \
+	$(DST)/gitkwexpand \
+	$(DST)/gitkwshrink \
 
 DIRS =    \
 	$(DEP)  \
@@ -130,8 +131,8 @@ all: \
 	$(DIRS)       \
 	$(DST_PROGS)  \
 	$(DST_SCRPT)  \
-	tags types    \
 	show_install  \
+#	tags types    \
 
 install: real_install
 	@true
@@ -186,7 +187,7 @@ make_it:
 	make PTH=$(PTH) CFLAGS="$(CFLAGS)" $(RUN)
 
 #We don't need to clean up when we're making these targets
-NODEPS:=clean tags svn install
+NODEPS:=clean svn install
 #Find all the C++ files in the $(SRC)/ directory
 SOURCES:=$(shell find $(SRC)  -name "*.c")
 #These are the dependency files, which make will clean up after it creates them
