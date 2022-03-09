@@ -34,6 +34,11 @@
 	- suggests:
 		- keywords were not re-expanded on checkout
 		- updated keywords not always saved?  clean vs smudge
+- mvi
+	- mvi gitkwfilter.sh is showing changes on all keyword lines
+	- mvi shows unmodified lines, but [return] shows modified lines
+	- local files are also unmodified
+	- suggests files are modified in repo, but not on checkout?
 
 ## Implementation
 - repo specific

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: mykeywords 2022-03-08 12:17:31 -0500  (HEAD -> main, origin/main, origin/HEAD) d757e7a Richard W. Mitchell rwmitchell@mac.com $
+# $Id$
 
 # when invoked from git, there are no cmdline args
 
@@ -13,12 +13,12 @@ ID=$( git show -s --date=format:"%F %T %z" --format="$( basename $PWD) %ad %d %h
 if [[ $FN ]]; then
   FQ=$PWD/$FN
 
-  sed "s#\$Id: mykeywords 2022-03-08 12:17:31 -0500  (HEAD -> main, origin/main, origin/HEAD) d757e7a Richard W. Mitchell rwmitchell@mac.com $
-       s#\$Source: /Users/rwmitchell/git/RWM/mykeywords $
-       s#\$Date: 2022-03-08 12:17:31 -0500 $
+  sed "s#\$Id.*\$#\$Id: $ID \$#; \
+       s#\$Source.*\$#\$Source: $FQ \$#; \
+       s#\$Date.*\$#\$Date: $DT \$#"     \
        < $FN
 else
-  sed "s#\$Id: mykeywords 2022-03-08 12:17:31 -0500  (HEAD -> main, origin/main, origin/HEAD) d757e7a Richard W. Mitchell rwmitchell@mac.com $
-       s#\$Source: /Users/rwmitchell/git/RWM/mykeywords $
-       s#\$Date: 2022-03-08 12:17:31 -0500 $
+  sed "s#\$Id.*\$#\$Id: $ID \$#; \
+       s#\$Source.*\$#\$Source: $FQ \$#; \
+       s#\$Date.*\$#\$Date: $DT \$#"
 fi
