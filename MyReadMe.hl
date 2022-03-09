@@ -5,6 +5,10 @@
 ## Resources
 - https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes  # Keyword Expansion
 - https://git-scm.com/book/en/v2/Customizing-Git-Git-Attributes#filters_b
+- https://www.nobledesktop.com/learn/git/stage-commit-files
+- https://github.com/rsmith-nl/git-keywords
+- https://github.com/rsmith-nl/wavelength_to_rgb.git
+	- unrelated but looks interesting
 
 ## Example HG keyword expansion:
 - // $Id: ctrl.h default 756f9b4b9011 2017/10/27 00:36:18 rwmitchell $
@@ -63,3 +67,22 @@
 	- it does not make sense to have $Source expanded to a local path when working on multiple systems
 - 'smudge' filter run on checkout
 - 'clean'  filter run on stage
+
+## Updating keywords
+- Observation:
+	- keywords are not updated after commit
+		- https://github.com/rsmith-nl/git-keywords/blob/main/update-modified-keywords.py
+		- finds files modified on last commit
+			+ git diff-tree HEAD --name-only -r --diff-filter=ACMRT
+		- if modified file contains keywords:
+			- remove file
+			- checkout -f file
+	- above script suggests this is necessary to update keywords
+	- doing this also causes all files with keywords to marked as modified
+- Conflict:
+	- if files are UNexpanded on commit, all expanded files show as modified - UNDESIRABLE
+	- thus, files must be expanded on commit BUT not contain any host specific data?
+	- is it an issue if we know which machine last commit was done?
+		- not directly, but would be helpful to know where a program was compiled locally
+		- use version.h for local machine info
+
