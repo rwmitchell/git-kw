@@ -1,6 +1,6 @@
 #ident "$Id$
-#ident "$Source: /tmp/git/mykeywords/ $
-#ident "$Date: 2022-03-08 11:35:04 -0500 $
+#ident "$Source: /Users/rwmitchell/git/RWM/mykeywords $
+#ident "$Date: 2022-03-09 00:11:26 +0000 $
 
 This is from: https://git-memo.readthedocs.io/en/latest/git_archive.html
 but there must be more to it as nothing expanded

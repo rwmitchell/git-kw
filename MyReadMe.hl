@@ -53,5 +53,12 @@
 	- should this have a regular Makefile and Source ?
 
 ## New Commands:
-	- git config --global filter.kw.smudge gitkwfilter
-	- git config --global filter.kw.clean  gitkwfilter
+- git config --global filter.kw.smudge gitkwfilter
+- git config --global filter.kw.clean  gitkwfilter
+
+## Updates
+- need to fix when filters are run
+- 'workarea' needs to have expanded keywords
+- 'committed' files need to be clean/unexpanded
+	- it does not make sense to have $Source expanded to a local path when working on multiple systems
+
