@@ -9,6 +9,7 @@
 - https://github.com/rsmith-nl/git-keywords
 - https://github.com/rsmith-nl/wavelength_to_rgb.git
 	- unrelated but looks interesting
+- https://stackoverflow.com/questions/41934945/why-does-git-status-run-filters
 
 ## Example HG keyword expansion:
 - // $Id: ctrl.h default 756f9b4b9011 2017/10/27 00:36:18 rwmitchell $
@@ -22,39 +23,41 @@
 - Enable filter
 	- git config filter.kw.smudge ./filter.kw
 	- git config filter.kw.clean  ./filter.kw     # testing
+- Disable filter
+	- git config --global filter.kw.smudge ./filter.kw
 
 ## Discussion
 - the filter should be in $PATH but can be hardcoded as done above
 - filter does not get cmdline args, need to find method for getting filename
 - have tried setting filter to either smudge, clean, and both
-	- setting 'smudge' to 'cat' resulted in getting the original file back on a 'git restore'
-	- setting 'smudge' to 'filter.kw' updates keywords on 'restore' but does not appear to update on 'add' or 'commit'
-	- 'clean' should be run when files are staged...which is 'add', right?
+- setting 'smudge' to 'cat' resulted in getting the original file back on a 'git restore'
+- setting 'smudge' to 'filter.kw' updates keywords on 'restore' but does not appear to update on 'add' or 'commit'
+- 'clean' should be run when files are staged...which is 'add', right?
 
 ## Observations
 - clone new repo to Moira
-	- keywords were not current
-	- .git/config does not contain filter commands
-	- suggests:
-		- keywords were not re-expanded on checkout
-		- updated keywords not always saved?  clean vs smudge
+- keywords were not current
+- .git/config does not contain filter commands
+- suggests:
+- keywords were not re-expanded on checkout
+- updated keywords not always saved?  clean vs smudge
 - mvi
-	- mvi gitkwfilter.sh is showing changes on all keyword lines
-	- mvi shows unmodified lines, but [return] shows modified lines
-	- local files are also unmodified
-	- suggests files are modified in repo, but not on checkout?
+- mvi gitkwfilter.sh is showing changes on all keyword lines
+- mvi shows unmodified lines, but [return] shows modified lines
+- local files are also unmodified
+- suggests files are modified in repo, but not on checkout?
 
 ## Implementation
 - repo specific
-	- put filter.kw in each repo
-	- allows local customization
+- put filter.kw in each repo
+- allows local customization
 - global
-	- put in ~/Build/bin
-		- Names?
-			+ gitfilter.kw ?
-			+ gitkwfilter.sh
-			+ gitkwfilter
-	- should this have a regular Makefile and Source ?
+- put in ~/Build/bin
+- Names?
++ gitfilter.kw ?
++ gitkwfilter.sh
++ gitkwfilter
+- should this have a regular Makefile and Source ?
 
 ## New Commands:
 - git config --global filter.kw.smudge gitkwfilter
@@ -64,25 +67,30 @@
 - need to fix when filters are run
 - 'workarea' needs to have expanded keywords
 - 'committed' files need to be clean/unexpanded
-	- it does not make sense to have $Source expanded to a local path when working on multiple systems
+- it does not make sense to have $Source expanded to a local path when working on multiple systems
 - 'smudge' filter run on checkout
 - 'clean'  filter run on stage
 
 ## Updating keywords
 - Observation:
-	- keywords are not updated after commit
-		- https://github.com/rsmith-nl/git-keywords/blob/main/update-modified-keywords.py
-		- finds files modified on last commit
-			+ git diff-tree HEAD --name-only -r --diff-filter=ACMRT
-		- if modified file contains keywords:
-			- remove file
-			- checkout -f file
-	- above script suggests this is necessary to update keywords
-	- doing this also causes all files with keywords to marked as modified
+- keywords are not updated after commit
+- https://github.com/rsmith-nl/git-keywords/blob/main/update-modified-keywords.py
+- finds files modified on last commit
++ git diff-tree HEAD --name-only -r --diff-filter=ACMRT
+- if modified file contains keywords:
+- remove file
+- checkout -f file
+- above script suggests this is necessary to update keywords
+- doing this also causes all files with keywords to marked as modified
 - Conflict:
-	- if files are UNexpanded on commit, all expanded files show as modified - UNDESIRABLE
+- if files are UNexpanded on commit, all expanded files show as modified - UNDESIRABLE
 	- thus, files must be expanded on commit BUT not contain any host specific data?
 	- is it an issue if we know which machine last commit was done?
 		- not directly, but would be helpful to know where a program was compiled locally
 		- use version.h for local machine info
 
+## Learning!
+- "staged" files are kept in .git/index in a binary file, thus we do not see the kw expansion
+- when does git update kw values? on add or commit?
+	- on 'commit' would explain why information is old as kw are expanded on 'add'
+- expanding kw on 'smudge' would update kw to their correct values, which would be newer than what was saved in the commit - causing a change

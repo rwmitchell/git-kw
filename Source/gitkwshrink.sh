@@ -13,12 +13,12 @@ ID=$( git show -s --date=format:"%F %T %z" --format="$( basename $PWD) %ad %d %h
 if [[ $FN ]]; then
   FQ=$PWD/$FN
 
-  sed "s#\$Id.*\$#\$Id\$#; \
+  sed "s#\$MyId.*\$#\$MyId\$#; \
        s#\$Source.*\$#\$Source\$#; \
        s#\$Date.*\$#\$Date\$#"     \
        < $FN
 else
-  sed "s#\$Id.*\$#\$Id\$#; \
+  sed "s#\$MyId.*\$#\$MyId\$#; \
        s#\$Source.*\$#\$Source\$#; \
        s#\$Date.*\$#\$Date\$#"
 fi

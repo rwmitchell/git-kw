@@ -1,6 +1,7 @@
-#ident "$Id$
-#ident "$Source: /tmp/git/mykeywords $
-#ident "$Date: 2022-03-09 06:21:39 -0500 $
+#ident "$Id$”
+#ident “$MyId: mykeywords 2022-03-09 08:09:24 -0500  (HEAD -> main, origin/main, origin/HEAD) 5326c80 Richard W. Mitchell rwmitchell@mac.com $
+#ident "$Source: /private/tmp/git/mykeywords $
+#ident "$Date: 2022-03-09 08:09:24 -0500 $
 
 This is from: https://git-memo.readthedocs.io/en/latest/git_archive.html
 but there must be more to it as nothing expanded
@@ -15,3 +16,8 @@ Trying: git stage
 • This commit is being applied with:
   git config --global filter.kw.clean gitkwexpand
   git config --global filter.kw.smudge cat
+• keywords were NOT updated on ‘stage’/clean
+• git checkout -f keywords.txt : updated? keywords
+• ‘Date’ keyword shows old date but mvi shows the line as being changed with original being the updated date ( ?! )
+
+• gitkwexpand now expands MyId, not Id; allowing ‘ident’ to do its normal thing

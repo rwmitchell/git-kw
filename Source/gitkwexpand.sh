@@ -6,19 +6,21 @@
 
 # ID="Keep it going"
 FN=$1
-FQ=$PWD
+FQ=$( git rev-parse --show-toplevel )
 DT=$( git show -s --date=format:"%F %T %z" --format="%ad" )
 ID=$( git show -s --date=format:"%F %T %z" --format="$( basename $PWD) %ad %d %h %an %aE" )
 
 if [[ $FN ]]; then
-  FQ=$PWD/$FN
+  FQ+="/$FN"
 
-  sed "s#\$Id.*\$#\$Id: $ID \$#; \
+  sed "s#\$MyId.*\$#\$MyId: $ID \$#; \
        s#\$Source.*\$#\$Source: $FQ \$#; \
        s#\$Date.*\$#\$Date: $DT \$#"     \
        < $FN
 else
-  sed "s#\$Id.*\$#\$Id: $ID \$#; \
+  printf "Updating keywords: %s|%s\n" "$0" "$*" > /dev/tty
+
+  sed "s#\$MyId.*\$#\$MyId: $ID \$#; \
        s#\$Source.*\$#\$Source: $FQ \$#; \
-       s#\$Date.*\$#\$Date: $DT \$#"
+       s#\$Date.*\$#\$Date: $DT \$#" # | tee /dev/tty
 fi

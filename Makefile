@@ -1,5 +1,6 @@
-# $Id$
-# $Source$
+# $Id: mykeywords 2022-03-08 12:17:31 -0500  (HEAD -> main, origin/main, origin/HEAD) d757e7a Richard W. Mitchell rwmitchell@mac.com $
+# $MyId: mykeywords 2022-03-09 08:09:24 -0500  (HEAD -> main, origin/main, origin/HEAD) 5326c80 Richard W. Mitchell rwmitchell@mac.com $
+# $Source: /private/tmp/git/mykeywords $
 ######################################################################
 # You'll need these:
 #    make.darwin-i386
@@ -132,6 +133,7 @@ all: \
 	$(DST_PROGS)  \
 	$(DST_SCRPT)  \
 	show_install  \
+	stamp         \
 #	tags types    \
 
 install: real_install
