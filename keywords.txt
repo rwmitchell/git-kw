@@ -1,7 +1,7 @@
 #ident "$Id$"
-#ident "$MyId$"
-#ident "$Source$"
-#ident "$Date$"
+#ident "$MyId$
+#ident "$Source$
+#ident "$Date$
 
 This is from: https://git-memo.readthedocs.io/en/latest/git_archive.html
 but there must be more to it as nothing expanded

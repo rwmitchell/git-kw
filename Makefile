@@ -1,6 +1,6 @@
-# $Id: mykeywords 2022-03-09 14:21:45 -0500  (HEAD -> main, origin/main, origin/HEAD) 7cf6465 Richard W. Mitchell rwmitchell@mac.com $
-# $MyId: mykeywords 2022-03-09 08:09:24 -0500  (HEAD -> main, origin/main, origin/HEAD) 5326c80 Richard W. Mitchell rwmitchell@mac.com $
-# $Source: /Users/rwmitchell/git/RWM/mykeywords $
+# $Id$
+# $MyId$
+# $Source$
 ######################################################################
 # You'll need these:
 #    make.darwin-i386
