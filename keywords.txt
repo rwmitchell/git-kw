@@ -3,7 +3,8 @@
 • Demonstrate custom keyword expansion
 
 #ident "$Id$"
-#ident "$MyId$
-#ident "$Source$
-#ident "$Date$
+#ident "$MyId$"
+#ident "$Source$"
+#ident "$Date$"
+#ident "$Auth$"
 
