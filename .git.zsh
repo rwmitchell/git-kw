@@ -8,9 +8,8 @@ alias -- gllf="git diff-tree --name-only --no-commit-id -r -a HEAD"   # List las
 alias -- gs="git status"
 
 function guk() {
-  fl=$( git diff-tree --name-only --no-commit-id -r -a HEAD )
+  fl=($( git diff-tree --name-only --no-commit-id -r -a HEAD ))  # convert output to array
   printf "Update: %s\n" $fl
-
 
   for file in $fl
   do
@@ -20,7 +19,7 @@ function guk() {
       n)                  ;;    # skip
       N|a|q) break        ;;    # skip and exit
       y|Y)   rm $file;          # do this file
-            git checkout -f $file ;;
+             git checkout -f $file ;;
     esac
   done
 
