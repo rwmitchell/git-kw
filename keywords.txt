@@ -1,23 +1,9 @@
+# Keyword Test
+
+• Demonstrate custom keyword expansion
+
 #ident "$Id$"
 #ident "$MyId$
 #ident "$Source$
 #ident "$Date$
 
-This is from: https://git-memo.readthedocs.io/en/latest/git_archive.html
-but there must be more to it as nothing expanded
-
-@date    $Format: %ci$
-@version $Format: %h$
-
-Text body for testing
-Trying: git stage
-
-• Wed Mar  9 08:08:17 EST 2022
-• This commit is being applied with:
-  git config --global filter.kw.clean gitkwexpand
-  git config --global filter.kw.smudge cat
-• keywords were NOT updated on ‘stage’/clean
-• git checkout -f keywords.txt : updated? keywords
-• ‘Date’ keyword shows old date but mvi shows the line as being changed with original being the updated date ( ?! )
-
-• gitkwexpand now expands MyId, not Id; allowing ‘ident’ to do its normal thing
