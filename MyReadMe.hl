@@ -94,3 +94,8 @@
 - when does git update kw values? on add or commit?
 	- on 'commit' would explain why information is old as kw are expanded on 'add'
 - expanding kw on 'smudge' would update kw to their correct values, which would be newer than what was saved in the commit - causing a change
+
+# Conclusion (for now)
+- shrink keywords on 'git add' (clean)before committing
+- expand keywords on 'git checkout' (smudge) to have in working copy
+
