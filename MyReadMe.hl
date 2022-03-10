@@ -1,4 +1,7 @@
 # Git Keywords
+## Notes
+- 2022-03-10: something has repeatedly caused tabs/identation to be lost
+	- this should be indented
 ## Goal
 - Provide same or similar keyword substitution used in HG
 
@@ -73,15 +76,15 @@
 
 ## Updating keywords
 - Observation:
-- keywords are not updated after commit
-- https://github.com/rsmith-nl/git-keywords/blob/main/update-modified-keywords.py
-- finds files modified on last commit
-+ git diff-tree HEAD --name-only -r --diff-filter=ACMRT
-- if modified file contains keywords:
-- remove file
-- checkout -f file
-- above script suggests this is necessary to update keywords
-- doing this also causes all files with keywords to marked as modified
+	- keywords are not updated after commit
+	- https://github.com/rsmith-nl/git-keywords/blob/main/update-modified-keywords.py
+		- finds files modified on last commit
+			+ git diff-tree HEAD --name-only -r --diff-filter=ACMRT
+		- if modified file contains keywords:
+		- remove file
+		- checkout -f file
+	- above script suggests this is necessary to update keywords
+	- doing this also causes all files with keywords to marked as modified
 - Conflict:
 - if files are UNexpanded on commit, all expanded files show as modified - UNDESIRABLE
 	- thus, files must be expanded on commit BUT not contain any host specific data?
@@ -98,4 +101,9 @@
 # Conclusion (for now)
 - shrink keywords on 'git add' (clean)before committing
 - expand keywords on 'git checkout' (smudge) to have in working copy
-
+- Updating keywords still requires:
+	- rm FILE
+	- git checkout -f FILE
+- see rsmith code above
+- commit id can be removed with:
+	- git diff-tree --name-only -r --diff-filter=ACMRT --no-commit-id HEAD
