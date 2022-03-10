@@ -1,7 +1,7 @@
 #ident "$Id$"
-#ident "$MyId: mykeywords 2022-03-09 23:10:08 +0000  (HEAD -> main) fab6c6b Richard Mitchell rwmitchell@gmail.com $"
-#ident "$Source: /Users/rwmitchell/git/RWM/mykeywords $"
-#ident "$Date: 2022-03-09 23:10:08 +0000 $"
+#ident "$MyId$"
+#ident "$Source$"
+#ident "$Date$"
 
 This is from: https://git-memo.readthedocs.io/en/latest/git_archive.html
 but there must be more to it as nothing expanded
