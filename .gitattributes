@@ -1,7 +1,10 @@
 *.txt    ident
-*.txt    filter=kw
-# DO NOT update gitkwfilter.sh ! changes code
-# *.sh     filter=kw
+*.zsh    ident
 Makefile ident
-Makefile filter=kw
+*.txt    filter=kw
 
+# DO NOT update gitkwfilter.sh ! changes code
+
+*.txt    filter=kw
+*.zsh    filter=kw
+Makefile filter=kw

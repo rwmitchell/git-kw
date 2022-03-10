@@ -1,6 +1,6 @@
 # Git aliases
 #
-# $MyID$
+# $MyId$
 # $Source$
 # $Date$
 #
