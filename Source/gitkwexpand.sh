@@ -11,6 +11,7 @@ DT=$( git show -s --date=format:"%F %T %z" --format="%ad" )
 ID=$( git show -s --date=format:"%F %T %z" --format="$( basename $PWD) %ad %d %h" )
 AN=$( git show -s --format="%an <%aE>" )
 LG=$( git log -n 3 --format="%aD%n%B" -- $FN )
+LG=$( echo "$LG" | sed 's/^/  /' )
 LG=${LG//$'\n'/\\n}   # escape newlines for sed
 
   printf "Updating keywords: %s|%s\n" "$0" "$*" > /dev/tty
@@ -20,7 +21,7 @@ LG=${LG//$'\n'/\\n}   # escape newlines for sed
        s#\\\$Date.*\\\$#\\\$Date: $DT \\\$#;     \
        s#\\\$Auth.*\\\$#\\\$Auth: $AN \\\$#;
        s#\\\$File.*\\\$#\\\$File: $FN \\\$#;     \
-       s#\\\$Log.*\\\$#\\\$Log:\\n$LG \n:Log\\\$#"     \
+       s#\\\$Log.*\\\$#\\\$Log:\\n$LG \n  :Log\\\$#"     \
 
 exit 0;
 
