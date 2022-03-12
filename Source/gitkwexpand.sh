@@ -4,7 +4,8 @@
 
 # when invoked from git, there are no cmdline args
 
-FN=$1
+# FN=$1
+FN=$(printf "%s" "$@" | sed -e 's,/,\\/,g' -e 's,&,\\&,g')
 FQ=$( git rev-parse --show-toplevel )
 DT=$( git show -s --date=format:"%F %T %z" --format="%ad" )
 ID=$( git show -s --date=format:"%F %T %z" --format="$( basename $PWD) %ad %d %h" )
@@ -17,7 +18,8 @@ if [[ $FN ]]; then
   sed "s#\\\$MyId.*\\\$#\\\$MyId: $ID \\\$#;     \
        s#\\\$Source.*\\\$#\\\$Source: $FQ \\\$#; \
        s#\\\$Date.*\\\$#\\\$Date: $DT \\\$#;     \
-       s#\\\$Auth.*\\\$#\\\$Auth: $AN \\\$#"     \
+       s#\\\$Auth.*\\\$#\\\$Auth: $AN \\\$#;     \
+       s#\\\$File.*\\\$#\\\$File: $FN \\\$#"     \
        < $FN
 else
   printf "Updating keywords: %s|%s\n" "$0" "$*" > /dev/tty
