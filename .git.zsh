@@ -8,7 +8,12 @@ alias -- gllf="git diff-tree --name-only --no-commit-id -r -a HEAD"   # List las
 alias -- gs="git status"
 
 function guk() {
-  fl=($( git diff-tree --name-only --no-commit-id -r -a HEAD ))  # convert output to array
+  if [[ $# -gt 0 ]]; then        # use cmdline args
+    fl=($@)
+  else                           # use last modified files
+    fl=($( git diff-tree --name-only --no-commit-id -r -a HEAD ))  # convert output to array
+  fi
+
   printf "Update: %s\n" $fl
 
   for file in $fl
