@@ -10,7 +10,7 @@ FQ=$( git rev-parse --show-toplevel )
 DT=$( git show -s --date=format:"%F %T %z" --format="%ad" )
 ID=$( git show -s --date=format:"%F %T %z" --format="$( basename $PWD) %ad %d %h" )
 AN=$( git show -s --format="%an <%aE>" )
-LG=$( git log -n 3 --format="%B" -- $FN )
+LG=$( git log -n 3 --format="%aD%n%B" -- $FN )
 LG=${LG//$'\n'/\\n}   # escape newlines for sed
 
   printf "Updating keywords: %s|%s\n" "$0" "$*" > /dev/tty
