@@ -20,7 +20,7 @@ LG=${LG//$'\n'/\\n}   # escape newlines for sed
        s#\\\$Date.*\\\$#\\\$Date: $DT \\\$#;     \
        s#\\\$Auth.*\\\$#\\\$Auth: $AN \\\$#;
        s#\\\$File.*\\\$#\\\$File: $FN \\\$#;     \
-       s#\\\$Log.*\\\$#\\\$Log:\\n$LG \\\:Log\$#"     \
+       s#\\\$Log.*\\\$#\\\$Log:\\n$LG \n:Log\\\$#"     \
 
 exit 0;
 
