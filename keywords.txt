@@ -10,6 +10,7 @@
 #ident "$File$"
 #
 /* 3 Last Commit msgs
-   $Log$
+  $Log:
+  :Log$
  */
 

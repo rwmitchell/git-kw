@@ -11,11 +11,17 @@ if [[ $FN ]]; then
   sed "s#\\\$MyId.*\\\$#\\\$MyId\\\$#;     \
        s#\\\$Source.*\\\$#\\\$Source\\\$#; \
        s#\\\$Date.*\\\$#\\\$Date\\\$#;     \
-       s#\\\$Auth.*\\\$#\\\$Auth\\\$#"     \
+       s#\\\$Auth.*\\\$#\\\$Auth\\\$#;     \
+       s#\\\$File.*\\\$#\\\$File\\\$#;     \
+       s#\\\$Log.*\\\$#\\\$Log\\\$#"       \
        < $FN
 else
   sed "s#\\\$MyId.*\\\$#\\\$MyId\\\$#;     \
        s#\\\$Source.*\\\$#\\\$Source\\\$#; \
        s#\\\$Date.*\\\$#\\\$Date\\\$#;     \
-       s#\\\$Auth.*\\\$#\\\$Auth\\\$#"
+       s#\\\$Auth.*\\\$#\\\$Auth\\\$#;     \
+       s#\\\$File.*\\\$#\\\$File\\\$#"     \
+  | sed -e '/$Log:/,/:Log\$/c\
+  $Log:\
+  :Log$'
 fi
