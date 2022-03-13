@@ -9,7 +9,13 @@ alias -- gs="git status"
 alias -- gau="git add -u"
 alias -- gc="git commit"
 alias -- gp="git push"
+alias -- gd="git diff"
+alias -- gdw="git diff --word-diff"
+alias -- glog="git log"
 
+# Git Update Keywords
+# guk : update keywords inlast committed files
+# guk FILE: update keywords in FILE
 function guk() {
   if [[ $# -gt 0 ]]; then        # use cmdline args
     fl=($@)
