@@ -6,6 +6,9 @@
 #
 alias -- gllf="git diff-tree --name-only --no-commit-id -r -a HEAD"   # List last files committed
 alias -- gs="git status"
+alias -- gau="git add -u"
+alias -- gc="git commit"
+alias -- gp="git push"
 
 function guk() {
   if [[ $# -gt 0 ]]; then        # use cmdline args
