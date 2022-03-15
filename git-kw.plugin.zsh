@@ -10,10 +10,11 @@ alias -- gss="git status -s"
 alias -- gau="git add -u"
 alias -- gc="git commit"
 alias -- gp="git push"
-alias -- gu="git pull"   # u for update
+alias -- gu="git pull"        # u for update
 alias -- gd="git diff"
 alias -- gdw="git diff --word-diff"
 alias -- glog="git log"
+alias -- grv="git remove -v"  # show remotes with url
 
 # Git Update Keywords
 # guk : update keywords inlast committed files
