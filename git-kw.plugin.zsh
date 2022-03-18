@@ -14,6 +14,7 @@ alias -- gu="git pull"        # u for update
 alias -- gd="git diff"
 alias -- gdw="git diff --word-diff"
 alias -- glog="git log"
+alias -- glg="git lg"         # fancier but shorter log
 alias -- grv="git remote -v"  # show remotes with url
 
 # Git Update Keywords
@@ -39,6 +40,25 @@ function guk() {
              git checkout -f $file ;;
     esac
   done
-
-
 }
+function gsra () {
+  for g in */.git
+  do
+    d=$( dirname $g )
+    printf "%s\n" "$d"
+    cd $d
+    git status -s
+    cd ..
+  done
+}
+function gpra () {
+  for g in */.git
+  do
+    d=$( dirname $g )
+    printf "%s\n" "$d"
+    cd $d
+    git pull
+    cd ..
+  done
+}
+
