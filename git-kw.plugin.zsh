@@ -41,7 +41,7 @@ function guk() {
     esac
   done
 }
-function gsra () {
+function gsra() {
   for g in */.git
   do
     d=$( dirname $g )
@@ -51,7 +51,7 @@ function gsra () {
     cd ..
   done
 }
-function gpra () {
+function gpra() {
   for g in */.git
   do
     d=$( dirname $g )
@@ -62,3 +62,51 @@ function gpra () {
   done
 }
 
+function tgc() {
+  local root=$( git rev-parse --show-toplevel )
+  local cmd=$root/.git_cmt_cmd
+  local rc=0
+  git commit $@                              # GIT -n HEAD
+  echo $root
+  rc=$?
+  [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
+  return $rc
+}
+
+function tgp() {
+  local root=$( git rev-parse --show-toplevel )
+  local rc=0
+  echo $root
+  local gr=($( git remote show ));
+  for h in $gr; do
+    cline 4
+    printf "Remote: %s\n" "$h"
+    if ( git push $h HEAD ); then            # GIT -n HEAD
+      ssay "$h updated!"
+    else
+      ((rc+=$?))
+    fi
+  done
+
+  return $rc
+}
+
+function tgu() {
+  local root=$( git rev-parse --show-toplevel )
+  local cmd=$root/.git_upd_cmd
+  local rc=0
+  echo $root
+  local gr=($( git remote show ));
+  for h in $gr; do
+    cline 4
+    printf "Remote: %s\n" "$h"
+    if ( git fetch $h ); then            # GIT -n HEAD
+      ssay "update from $h"
+    else
+      ((rc+=$?))
+    fi
+  done
+
+  [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
+  return $rc
+}
