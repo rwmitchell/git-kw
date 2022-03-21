@@ -92,7 +92,7 @@ function tgp() {
   return $rc
 }
 
-function tgu() {
+function tgf() {
   local root=$( git rev-parse --show-toplevel )
   local cmd=$root/.git_upd_cmd
   local rc=0
