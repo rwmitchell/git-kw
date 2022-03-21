@@ -7,6 +7,7 @@
 alias -- gllf="git diff-tree --name-only --no-commit-id -r -a HEAD"   # List last files committed
 alias -- gs="git status"
 alias -- gss="git status -s"
+alias -- ga="git add"
 alias -- gau="git add -u"
 alias -- gc="git commit"
 alias -- gp="git push"
@@ -100,13 +101,30 @@ function tgu() {
   for h in $gr; do
     cline 4
     printf "Remote: %s\n" "$h"
-    if ( git fetch $h ); then            # GIT -n HEAD
+    if ( git fetch $h ); then                # GIT -n HEAD
       ssay "update from $h"
     else
       ((rc+=$?))
     fi
   done
 
+# [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
+  return $rc
+}
+
+function tgm() {
+  local root=$( git rev-parse --show-toplevel )
+  local cmd=$root/.git_upd_cmd
+  local rc=0
+  echo $root
+  if ( git merge FETCH_HEAD ); then          # GIT -n HEAD
+    ssay "merged from FETCH_HEAD"
+  else
+    ((rc+=$?))
+    ssay "that as unexpected"                # to determine when this happens
+  fi
+
   [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
   return $rc
 }
+
