@@ -112,6 +112,17 @@ function tgf() {
   return $rc
 }
 
+function tgfr() {
+  for repo in */.git; do
+    rdir=$(dirname $repo )
+    echo $rdir
+    cd $rdir
+    tgf       # git fetch
+    cd ..
+    yline
+  done
+}
+
 function tgm() {
   local root=$( git rev-parse --show-toplevel )
   local cmd=$root/.git_upd_cmd
@@ -128,3 +139,13 @@ function tgm() {
   return $rc
 }
 
+function tgmr() {
+  for repo in */.git; do
+    rdir=$(dirname $repo )
+    echo $rdir
+    cd $rdir
+    tgm       # git merge
+    cd ..
+    yline
+  done
+}
