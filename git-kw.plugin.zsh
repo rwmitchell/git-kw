@@ -5,18 +5,16 @@
 # $Date$
 #
 alias -- gllf="git diff-tree --name-only --no-commit-id -r -a HEAD"   # List last files committed
-alias -- gs="git status"
-alias -- gss="git status -s"
-alias -- ga="git add"
-alias -- gau="git add -u"
-alias -- gc="git commit"
-alias -- gp="git push"
-alias -- gu="git pull"        # u for update
-alias -- gd="git diff"
-alias -- gdw="git diff --word-diff"
+alias --   gs="git status"
+alias --  gss="git status -s"
+alias --   ga="git add"
+alias --  gau="git add -u"
+alias --   gd="git diff"
+alias --  gdo="git difftool"   # uses opendiff
+alias --  gdw="git diff --word-diff"
 alias -- glog="git log"
-alias -- glg="git lg"         # fancier but shorter log
-alias -- grv="git remote -v"  # show remotes with url
+alias --  glg="git lg"         # fancier but shorter log
+alias --  grv="git remote -v"  # show remotes with url
 
 # Git Update Keywords
 # guk : update keywords inlast committed files
@@ -42,6 +40,7 @@ function guk() {
     esac
   done
 }
+
 function gsra() {
   for g in */.git
   do
@@ -52,6 +51,7 @@ function gsra() {
     cd ..
   done
 }
+
 function gpra() {
   for g in */.git
   do
@@ -63,7 +63,7 @@ function gpra() {
   done
 }
 
-function tgc() {
+function gc() {
   local root=$( git rev-parse --show-toplevel )
   local cmd=$root/.git_cmt_cmd
   local rc=0
@@ -74,7 +74,7 @@ function tgc() {
   return $rc
 }
 
-function tgp() {
+function gp() {
   local root=$( git rev-parse --show-toplevel )
   local rc=0
   echo $root
@@ -92,7 +92,7 @@ function tgp() {
   return $rc
 }
 
-function tgf() {
+function gf() {
   local root=$( git rev-parse --show-toplevel )
   local cmd=$root/.git_upd_cmd
   local rc=0
@@ -112,7 +112,7 @@ function tgf() {
   return $rc
 }
 
-function tgfr() {
+function gfr() {                             # check subdirs
   for repo in */.git; do
     rdir=$(dirname $repo )
     echo $rdir
@@ -123,7 +123,7 @@ function tgfr() {
   done
 }
 
-function tgm() {
+function gm() {                              # git merge
   local root=$( git rev-parse --show-toplevel )
   local cmd=$root/.git_upd_cmd
   local rc=0
@@ -139,7 +139,7 @@ function tgm() {
   return $rc
 }
 
-function tgmr() {
+function gmr() {
   for repo in */.git; do
     rdir=$(dirname $repo )
     echo $rdir
