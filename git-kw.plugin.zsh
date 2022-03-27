@@ -103,8 +103,20 @@ function tgp() {
     printf "Remote: %s\n" "$h"
     local rid=$( git rev-parse $h/main )
     if [[ $lid != $rid ]]; then
-      ssay "$h needs updating!"
-      ((rc+=1))
+      local cnt=$( git diff --name-only $h/main...HEAD | wc -l )
+      if [[ $cnt > 0 ]]; then
+        printf "Updating %d files on %s\n" "$cnt" "$h"
+        ssay "Updating $cnt files on $h!"
+        # Checking OLD/NEW here shows if there is an actual transfer
+  #     OLD_COMMIT=$(git rev-parse $h/main )
+  #     git push $h HEAD
+  #     NEW_COMMIT=$(git rev-parse $h/main )
+        ((rc+=1))
+      else
+        ssay "$h is current"
+      fi
+    else
+      ssay "$h matches local"
     fi
   done
 
@@ -128,6 +140,38 @@ function gf() {
   done
 
 # [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
+  return $rc
+}
+
+function tgf() {
+  local root=$( git rev-parse --show-toplevel )
+  local rc=0
+  echo $root
+  local gr=($( git remote show ));
+  local lid=$( git rev-parse HEAD );
+  for h in $gr; do
+    cline 4
+    printf "Remote: %s\n" "$h"
+    local rid=$( git rev-parse $h/main )
+    if [[ $lid != $rid ]]; then
+      local cnt=$( git diff --name-only HEAD...$h/main | wc -l )
+      if [[ $cnt > 0 ]]; then
+        printf "Getting %d files from %s\n" "$cnt" "$h"
+        ssay "Getting $cnt files from $h!"
+        # Checking OLD/NEW here shows if there is an actual transfer
+  #     OLD_COMMIT=$(git rev-parse $h/main )
+  #     git fetch $h HEAD
+  #     NEW_COMMIT=$(git rev-parse $h/main )
+        ((rc+=1))
+      else
+        ssay "current with $h"
+      fi
+    else
+      ssay "$h matches local"
+    fi
+  done
+
+
   return $rc
 }
 
