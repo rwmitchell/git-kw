@@ -41,7 +41,7 @@ function guk() {
   done
 }
 
-function gsra() {
+function gsr() {
   for g in */.git
   do
     d=$( dirname $g )
@@ -52,7 +52,7 @@ function gsra() {
   done
 }
 
-function gpra() {
+function gpr() {
   for g in */.git
   do
     d=$( dirname $g )
@@ -92,6 +92,25 @@ function gp() {
   return $rc
 }
 
+function tgp() {
+  local root=$( git rev-parse --show-toplevel )
+  local rc=0
+  echo $root
+  local gr=($( git remote show ));
+  local lid=$( git rev-parse HEAD );
+  for h in $gr; do
+    cline 4
+    printf "Remote: %s\n" "$h"
+    local rid=$( git rev-parse $h/main )
+    if [[ $lid != $rid ]]; then
+      ssay "$h needs updating!"
+      ((rc+=1))
+    fi
+  done
+
+  return $rc
+}
+
 function gf() {
   local root=$( git rev-parse --show-toplevel )
   local cmd=$root/.git_upd_cmd
@@ -117,7 +136,7 @@ function gfr() {                             # check subdirs
     rdir=$(dirname $repo )
     echo $rdir
     cd $rdir
-    tgf       # git fetch
+    gf                                       # git fetch
     cd ..
     yline
   done
@@ -144,7 +163,7 @@ function gmr() {
     rdir=$(dirname $repo )
     echo $rdir
     cd $rdir
-    tgm       # git merge
+    gm                                       # git merge
     cd ..
     yline
   done
