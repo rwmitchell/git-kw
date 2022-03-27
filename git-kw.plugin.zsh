@@ -79,24 +79,6 @@ function gp() {
   local rc=0
   echo $root
   local gr=($( git remote show ));
-  for h in $gr; do
-    cline 4
-    printf "Remote: %s\n" "$h"
-    if ( git push $h HEAD ); then            # GIT -n HEAD
-      ssay "$h updated!"
-    else
-      ((rc+=$?))
-    fi
-  done
-
-  return $rc
-}
-
-function tgp() {
-  local root=$( git rev-parse --show-toplevel )
-  local rc=0
-  echo $root
-  local gr=($( git remote show ));
   local lid=$( git rev-parse HEAD );
   for h in $gr; do
     cline 4
@@ -108,9 +90,9 @@ function tgp() {
         printf "Updating %d files on %s\n" "$cnt" "$h"
         ssay "Updating $cnt files on $h!"
         # Checking OLD/NEW here shows if there is an actual transfer
-  #     OLD_COMMIT=$(git rev-parse $h/main )
-  #     git push $h HEAD
-  #     NEW_COMMIT=$(git rev-parse $h/main )
+#       OLD_COMMIT=$(git rev-parse $h/main )
+        git push $h HEAD
+#       NEW_COMMIT=$(git rev-parse $h/main )
         ((rc+=1))
       else
         ssay "$h is current"
@@ -124,26 +106,6 @@ function tgp() {
 }
 
 function gf() {
-  local root=$( git rev-parse --show-toplevel )
-  local cmd=$root/.git_upd_cmd
-  local rc=0
-  echo $root
-  local gr=($( git remote show ));
-  for h in $gr; do
-    cline 4
-    printf "Remote: %s\n" "$h"
-    if ( git fetch $h ); then                # GIT -n HEAD
-      ssay "update from $h"
-    else
-      ((rc+=$?))
-    fi
-  done
-
-# [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
-  return $rc
-}
-
-function tgf() {
   local root=$( git rev-parse --show-toplevel )
   local rc=0
   echo $root
@@ -159,9 +121,9 @@ function tgf() {
         printf "Getting %d files from %s\n" "$cnt" "$h"
         ssay "Getting $cnt files from $h!"
         # Checking OLD/NEW here shows if there is an actual transfer
-  #     OLD_COMMIT=$(git rev-parse $h/main )
-  #     git fetch $h HEAD
-  #     NEW_COMMIT=$(git rev-parse $h/main )
+#       OLD_COMMIT=$(git rev-parse $h/main )
+        git fetch $h HEAD
+#       NEW_COMMIT=$(git rev-parse $h/main )
         ((rc+=1))
       else
         ssay "current with $h"
@@ -170,7 +132,6 @@ function tgf() {
       ssay "$h matches local"
     fi
   done
-
 
   return $rc
 }
