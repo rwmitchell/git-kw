@@ -105,6 +105,31 @@ function gp() {
   return $rc
 }
 
+# Git Check Remote - are remotes and local in-sync ?
+function gcr() {
+  local root=$(basename $( git rev-parse --show-toplevel ) )
+  local rc=0
+  echo $root
+  local gr=($( git remote show ));
+  local lid=$( git rev-parse HEAD );
+  for h in $gr; do
+    cline 4
+    printf "Remote: %s\n" "$h"
+    local rid=($( git ls-remote $h HEAD ))
+    rid=$rid[1]
+    if [[ $lid != $rid ]]; then
+      printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
+      ssay "$root not in sync with $h"
+      ((rc+=1))
+    else
+      ssay "$h matches $root"
+    fi
+  done
+
+  return $rc
+}
+
+# Git Fetch and report # of files changed
 function gf() {
   local root=$( git rev-parse --show-toplevel )
   local rc=0
@@ -114,11 +139,13 @@ function gf() {
   for h in $gr; do
     cline 4
     printf "Remote: %s\n" "$h"
-    local rid=$( git ls-remote $h HEAD )
+    local rid=($( git ls-remote $h HEAD ))
+    rid=$rid[1]
     if [[ $lid != $rid ]]; then
       OLD_COMMIT=$(git rev-parse $h/main )
       git fetch $h HEAD
-      NEW_COMMIT=$(git rev-parse $h/main )
+      NEW_COMMIT=$( git rev-parse FETCH_HEAD )
+      printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
       local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
       printf "%d files from %s\n" "$cnt" "$h"
       ssay "Got $cnt files from $h!"
