@@ -114,20 +114,16 @@ function gf() {
   for h in $gr; do
     cline 4
     printf "Remote: %s\n" "$h"
-    local rid=$( git rev-parse $h/main )
+    local rid=$( git ls-remote $h HEAD )
     if [[ $lid != $rid ]]; then
-      local cnt=$( git diff --name-only HEAD...$h/main | wc -l )
-      if [[ $cnt > 0 ]]; then
-        printf "Getting %d files from %s\n" "$cnt" "$h"
-        ssay "Getting $cnt files from $h!"
-        # Checking OLD/NEW here shows if there is an actual transfer
-#       OLD_COMMIT=$(git rev-parse $h/main )
-        git fetch $h HEAD
-#       NEW_COMMIT=$(git rev-parse $h/main )
-        ((rc+=1))
-      else
-        ssay "current with $h"
-      fi
+      OLD_COMMIT=$(git rev-parse $h/main )
+      git fetch $h HEAD
+      NEW_COMMIT=$(git rev-parse $h/main )
+      local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
+      printf "%d files from %s\n" "$cnt" "$h"
+      ssay "Got $cnt files from $h!"
+      # Checking OLD/NEW here shows if there is an actual transfer
+      ((rc+=1))
     else
       ssay "$h matches local"
     fi
