@@ -12,7 +12,7 @@ alias --  gau="git add -u"
 alias --   gd="git diff"
 alias --  gdo="git difftool"   # uses opendiff
 alias --  gdw="git diff --word-diff"
-alias -- glog="git log"
+alias -- glog="git glog"
 alias --  glg="git lg"         # fancier but shorter log
 alias --  grv="git remote -v"  # show remotes with url
 
