@@ -76,6 +76,7 @@ function gc() {
 
 function gp() {
   local root=$( git rev-parse --show-toplevel )
+  local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local rc=0
   echo $root
   local gr=($( git remote show ));
@@ -83,16 +84,16 @@ function gp() {
   for h in $gr; do
     cline 4
     printf "Remote: %s\n" "$h"
-    local rid=$( git rev-parse $h/main )
+    local rid=$( git rev-parse $h/$branch )
     if [[ $lid != $rid ]]; then
-      local cnt=$( git diff --name-only $h/main...HEAD | wc -l )
+      local cnt=$( git diff --name-only $h/$branch...HEAD | wc -l )
       if [[ $cnt > 0 ]]; then
         printf "Updating %d files on %s\n" "$cnt" "$h"
         ssay "Updating $cnt files on $h!"
         # Checking OLD/NEW here shows if there is an actual transfer
-#       OLD_COMMIT=$(git rev-parse $h/main )
+#       OLD_COMMIT=$(git rev-parse $h/$branch )
         git push $h HEAD
-#       NEW_COMMIT=$(git rev-parse $h/main )
+#       NEW_COMMIT=$(git rev-parse $h/$branch )
         ((rc+=1))
       else
         ssay "$h is current"
@@ -132,6 +133,7 @@ function gcr() {
 # Git Fetch and report # of files changed
 function gf() {
   local root=$( git rev-parse --show-toplevel )
+  local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local rc=0
   echo $root
   local gr=($( git remote show ));
@@ -142,7 +144,7 @@ function gf() {
     local rid=($( git ls-remote $h HEAD ))
     rid=$rid[1]
     if [[ $lid != $rid ]]; then
-      OLD_COMMIT=$(git rev-parse $h/main )
+      OLD_COMMIT=$(git rev-parse $h/$branch )
       git fetch $h HEAD
       NEW_COMMIT=$( git rev-parse FETCH_HEAD )
       printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
