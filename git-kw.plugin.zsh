@@ -14,7 +14,9 @@ alias --  gdo="git difftool"   # uses opendiff
 alias --  gdw="git diff --word-diff"
 alias -- glog="git glog"
 alias --  glg="git lg"         # fancier but shorter log
+alias --  glm="git log HEAD..FETCH_HEAD"
 alias --  grv="git remote -v"  # show remotes with url
+alias --  gdu="git diff --stat --cached origin/main"     # needs to be in a function
 
 # Git Update Keywords
 # guk : update keywords inlast committed files
@@ -109,6 +111,7 @@ function gp() {
 # Git Check Remote - are remotes and local in-sync ?
 function gcr() {
   local root=$(basename $( git rev-parse --show-toplevel ) )
+  local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local rc=0
   echo $root
   local gr=($( git remote show ));
@@ -120,6 +123,11 @@ function gcr() {
     rid=$rid[1]
     if [[ $lid != $rid ]]; then
       printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
+      printf "\n"
+      git diff --name-only HEAD..FETCH_HEAD
+      printf "\n"
+      git log HEAD...FETCH_HEAD
+      printf "\n"
       ssay "$root not in sync with $h"
       ((rc+=1))
     else
@@ -148,6 +156,10 @@ function gf() {
       git fetch $h HEAD
       NEW_COMMIT=$( git rev-parse FETCH_HEAD )
       printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
+      git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
+      printf "\n"
+      git log HEAD...FETCH_HEAD
+      printf "\n"
       local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
       printf "%d files from %s\n" "$cnt" "$h"
       ssay "Got $cnt files from $h!"
@@ -177,6 +189,7 @@ function gm() {                              # git merge
   local cmd=$root/.git_upd_cmd
   local rc=0
   echo $root
+  git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
   if ( git merge FETCH_HEAD ); then          # GIT -n HEAD
     ssay "merged from FETCH_HEAD"
   else
