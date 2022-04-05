@@ -50,7 +50,7 @@ function gsr() {
     printf "%s\n" "$d"
     cd $d
     git status -s
-    cd ..
+    cd -
   done
 }
 
@@ -61,7 +61,7 @@ function gpr() {
     printf "%s\n" "$d"
     cd $d
     git pull
-    cd ..
+    cd -
   done
 }
 
@@ -110,6 +110,20 @@ function gp() {
 
 # Git Check Remote - are remotes and local in-sync ?
 function gcr() {
+  local arg silent=0
+  for arg in $@; do
+    case $arg in
+      -s|--silent) (( silent+=1 ));;
+      -ss) (( silent+=2 ));;
+      -h|--help  )
+        printf "-s|--silent : (1) silence 'in sync' message\n"
+        printf "-s|--silent : (2) silence 'not in sync' message\n"
+        return;;
+      *) printf "Unexpected: %s\n" "$arg"
+        return;;
+    esac
+  done
+
   local root=$(basename $( git rev-parse --show-toplevel ) )
   local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local rc=0
@@ -128,14 +142,23 @@ function gcr() {
       printf "\n"
       git log HEAD...FETCH_HEAD
       printf "\n"
-      ssay "$root not in sync with $h"
+      [[ $silent < 2 ]] && ssay "$root not in sync with $h"
       ((rc+=1))
     else
-      ssay "$h matches $root"
+      [[ $silent < 1 ]] && ssay "$h matches $root"
     fi
   done
 
   return $rc
+}
+
+function gcrr() {
+  local dir
+  foreach dir in **/.git; do
+    cd $( dirname $dir  )
+    gcr -s
+    cd -
+  done
 }
 
 # Git Fetch and report # of files changed
@@ -179,7 +202,7 @@ function gfr() {                             # check subdirs
     echo $rdir
     cd $rdir
     gf                                       # git fetch
-    cd ..
+    cd -
     yline
   done
 }
@@ -207,7 +230,7 @@ function gmr() {
     echo $rdir
     cd $rdir
     gm                                       # git merge
-    cd ..
+    cd -
     yline
   done
 }
