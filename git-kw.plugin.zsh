@@ -10,8 +10,9 @@ alias --  gss="git status -s"
 alias --   ga="git add"
 alias --  gau="git add -u"
 alias --   gd="git diff"
-alias --  gdo="git difftool"   # uses opendiff
 alias --  gdw="git diff --word-diff"
+alias --  gdo="git difftool"      # uses opendiff
+alias -- gdoy="git difftool -y"   # uses opendiff, no prompting
 alias -- glog="git glog"
 alias --  glg="git lg"         # fancier but shorter log
 alias --  glm="git log HEAD..FETCH_HEAD"
@@ -169,6 +170,21 @@ function gf() {
   echo $root
   local gr=($( git remote show ));
   local lid=$( git rev-parse HEAD );
+
+  local arg silent=0
+  for arg in $@; do
+    case $arg in
+      -s|--silent) (( silent+=1 ));;
+      -ss) (( silent+=2 ));;
+      -h|--help  )
+        printf "-s|--silent : (1) silence 'in sync' message\n"
+        printf "-s|--silent : (2) silence 'not in sync' message\n"
+        return;;
+      *) printf "Unexpected: %s\n" "$arg"
+        return;;
+    esac
+  done
+
   for h in $gr; do
     cline 4
     printf "Remote: %s\n" "$h"
@@ -201,7 +217,7 @@ function gfr() {                             # check subdirs
     rdir=$(dirname $repo )
     echo $rdir
     cd $rdir
-    gf                                       # git fetch
+    gf -s                                    # git fetch, silence no changes
     cd -
     yline
   done
