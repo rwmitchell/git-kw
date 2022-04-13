@@ -45,6 +45,7 @@ function guk() {
 }
 
 function gsr() {
+  setopt localoptions noautopushd nopushdignoredups  # disable options here only
   for g in */.git
   do
     d=$( dirname $g )
@@ -56,6 +57,7 @@ function gsr() {
 }
 
 function gpr() {
+  setopt localoptions noautopushd nopushdignoredups
   for g in */.git
   do
     d=$( dirname $g )
@@ -154,6 +156,7 @@ function gcr() {
 }
 
 function gcrr() {
+  setopt localoptions noautopushd nopushdignoredups
   local dir
   foreach dir in **/.git; do
     cd $( dirname $dir  )
@@ -165,6 +168,7 @@ function gcrr() {
 # Git Fetch and report # of files changed
 function gf() {
   local root=$( git rev-parse --show-toplevel )
+  local rdir=$(basename $root )
   local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local rc=0
   echo $root
@@ -201,11 +205,11 @@ function gf() {
       printf "\n"
       local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
       printf "%d files from %s\n" "$cnt" "$h"
-      ssay "Got $cnt files from $h!"
+      ssay "Got $cnt files from $h for $rdir!"
       # Checking OLD/NEW here shows if there is an actual transfer
       ((rc+=1))
     else
-      ssay "$h matches local"
+      [[ $silent < 1 ]] && ssay "$h matches local"
     fi
   done
 
@@ -213,8 +217,9 @@ function gf() {
 }
 
 function gfr() {                             # check subdirs
+  setopt localoptions noautopushd nopushdignoredups
   for repo in */.git; do
-    rdir=$(dirname $repo )
+    local rdir=$(dirname $repo )
     echo $rdir
     cd $rdir
     gf -s                                    # git fetch, silence no changes
@@ -241,6 +246,7 @@ function gm() {                              # git merge
 }
 
 function gmr() {
+  setopt localoptions noautopushd nopushdignoredups
   for repo in */.git; do
     rdir=$(dirname $repo )
     echo $rdir
