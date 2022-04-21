@@ -6,11 +6,6 @@
 #
 alias -- gllf="git diff-tree --name-only --no-commit-id -r -a HEAD"   # List last files committed
 alias --   gs="git status"
-alias --  gss="git status -s"
-alias --   ga="git add"
-alias --  gau="git add -u"
-alias --   gd="git diff"
-alias --  gdw="git diff --word-diff"
 alias --  gdo="git difftool"      # uses opendiff
 alias -- gdoy="git difftool -y"   # uses opendiff, no prompting
 alias -- glog="git glog"
@@ -18,6 +13,21 @@ alias --  glg="git lg"         # fancier but shorter log
 alias --  glm="git log HEAD..FETCH_HEAD"
 alias --  grv="git remote -v"  # show remotes with url
 alias --  gdu="git diff --stat --cached origin/main"     # needs to be in a function
+
+# These aliases match those in OMZ/plugins/git - START
+alias --   ga="git add"
+alias --  gau="git add --update"
+
+alias --   gb="git branch"
+alias --  gba="git branch -a"
+
+alias --   gd="git diff"
+alias -- gcda="git diff --cached"
+alias --  gds="git diff --staged"
+alias --  gdw="git diff --word-diff"
+
+alias --  gss="git status -s"
+# These aliases match those in OMZ/plugins/git - END
 
 # Git Update Keywords
 # guk : update keywords inlast committed files
