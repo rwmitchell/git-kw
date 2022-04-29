@@ -88,6 +88,7 @@ function gc() {
   [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
   return $rc
 }
+compdef _git gc=git-commit
 
 function gp() {
   local root=$( git rev-parse --show-toplevel )
