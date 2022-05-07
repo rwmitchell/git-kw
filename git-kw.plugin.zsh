@@ -107,9 +107,9 @@ function gp() {
         printf "Updating %d files on %s\n" "$cnt" "$h"
         ssay "Updating $cnt files on $h!"
         # Checking OLD/NEW here shows if there is an actual transfer
-#       OLD_COMMIT=$(git rev-parse $h/$branch )
+#       OLD_COMMIT=$( git rev-parse $h/$branch )
         git push $h HEAD
-#       NEW_COMMIT=$(git rev-parse $h/$branch )
+#       NEW_COMMIT=$( git rev-parse $h/$branch )
         ((rc+=1))
       else
         ssay "$h is current"
@@ -206,7 +206,7 @@ function gf() {
     local rid=($( git ls-remote $h HEAD ))
     rid=$rid[1]
     if [[ $lid != $rid ]]; then
-      OLD_COMMIT=$(git rev-parse $h/$branch )
+      OLD_COMMIT=$( git rev-parse $h/$branch )
       git fetch $h HEAD
       NEW_COMMIT=$( git rev-parse FETCH_HEAD )
       printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
@@ -241,9 +241,12 @@ function gfr() {                             # check subdirs
 
 function gm() {                              # git merge
   local root=$( git rev-parse --show-toplevel )
+  local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local cmd=$root/.git_upd_cmd
   local rc=0
   echo $root
+  OLD_COMMIT=$( git rev-parse HEAD)     # $h/$branch )
+  NEW_COMMIT=$( git rev-parse FETCH_HEAD )
   git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
   if ( git merge FETCH_HEAD ); then          # GIT -n HEAD
     ssay "merged from FETCH_HEAD"
