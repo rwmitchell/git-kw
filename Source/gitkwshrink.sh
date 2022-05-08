@@ -22,5 +22,6 @@ else
        s#\\\$Auth.*\\\$#\\\$Auth\\\$#;     \
        s#\\\$File.*\\\$#\\\$File\\\$#"     \
   | sed -e '/$GLog:/,/:GLog\$/c\
-  \$GLog\$'
+  $GLog:\
+  :GLog\$'
 fi

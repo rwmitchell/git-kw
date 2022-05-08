@@ -16,7 +16,8 @@ AN=$( git show -s --format="%an <%aE>" )
 # 2022-03-19: sed breaks on nur_util.c, disabling
 LG=$( git log -n 3 --format="%aD%n%B" -- $FN )
 LG=$( echo "$LG" | sed 's/^/  /;s/^ *$//' )   # insert two space before each line
-LG=${LG//$'\n'/\\n}                           # escape newlines for sed
+LG=${LG//$'\n'/\\
+}                                             # escape newlines for sed
 
   printf "Updating keywords: %s|%s\n" "$0" "$*" > /dev/tty
 
@@ -24,8 +25,11 @@ LG=${LG//$'\n'/\\n}                           # escape newlines for sed
        s#\\\$Source.*\\\$#\\\$Source: $FQ \\\$#; \
        s#\\\$Date.*\\\$#\\\$Date: $DT \\\$#;     \
        s#\\\$Auth.*\\\$#\\\$Auth: $AN \\\$#;     \
-       s#\\\$File.*\\\$#\\\$File: $FN \\\$#;     \
-       s#\\\$GLog.*\\\$#\\\$GLog:\\n$LG\n  :GLog\\\$#" \
+       s#\\\$File.*\\\$#\\\$File: $FN \\\$#"     \
+  | sed -e '/$GLog:/,/:GLog\$/c\
+  $GLog:\
+  '"$LG"' \
+  :GLog$'
 
 # printf "FN :  %s\n" "$FN" > /dev/tty
 # printf "LOG:\n%s\n" "$LG" > /dev/tty
