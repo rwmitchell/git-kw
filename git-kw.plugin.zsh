@@ -21,7 +21,7 @@ alias --  gau="git add --update"
 alias --   gb="git branch"
 alias --  gba="git branch -a"
 
-alias --   gd="git diff"
+alias --   gd="git diff --ignore-space-change"
 alias -- gcda="git diff --cached"
 alias --  gds="git diff --staged"
 alias --  gdw="git diff --word-diff"
