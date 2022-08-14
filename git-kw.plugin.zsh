@@ -182,7 +182,7 @@ function gf() {
   local rdir=$(basename $root )
   local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local rc=0
-  echo $root
+  printf "Root: %s\n" "$root"
   local gr=($( git remote show ));
   local lid=$( git rev-parse HEAD );
 
@@ -203,16 +203,17 @@ function gf() {
   for h in $gr; do
     cline 4
     printf "Remote: %s\n" "$h"
-    local rid=($( git ls-remote $h HEAD ))
+    local rid=($( git ls-remote $h $branch ))   # HEAD ))
     rid=$rid[1]
     if [[ $lid != $rid ]]; then
       OLD_COMMIT=$( git rev-parse $h/$branch )
-      git fetch $h HEAD
+      git fetch $h $branch  # HEAD
       NEW_COMMIT=$( git rev-parse FETCH_HEAD )
       printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
       git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
       printf "\n"
-      git log HEAD...FETCH_HEAD
+#     git log HEAD...FETCH_HEAD
+      git log $h/$branch...FETCH_HEAD
       printf "\n"
       local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
       printf "%d files from %s\n" "$cnt" "$h"
@@ -220,6 +221,7 @@ function gf() {
       # Checking OLD/NEW here shows if there is an actual transfer
       ((rc+=1))
     else
+      printf "%s matches %s\n" "$h" "$branch"
       [[ $silent < 1 ]] && ssay "$h matches local"
     fi
   done
@@ -243,9 +245,11 @@ function gm() {                              # git merge
   local root=$( git rev-parse --show-toplevel )
   local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local cmd=$root/.git_upd_cmd
+  local gr=$(git remote show)           # assume only one
   local rc=0
   echo $root
-  OLD_COMMIT=$( git rev-parse HEAD)     # $h/$branch )
+# OLD_COMMIT=$( git rev-parse HEAD)     # $h/$branch )
+  OLD_COMMIT=$( git rev-parse $gr/$branch)
   NEW_COMMIT=$( git rev-parse FETCH_HEAD )
   git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
   if ( git merge FETCH_HEAD ); then          # GIT -n HEAD
