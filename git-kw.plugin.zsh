@@ -245,11 +245,11 @@ function gm() {                              # git merge
   local root=$( git rev-parse --show-toplevel )
   local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local cmd=$root/.git_upd_cmd
-  local gr=$(git remote show)           # assume only one
+# local gr=($( git remote show ));
   local rc=0
   echo $root
 # OLD_COMMIT=$( git rev-parse HEAD)     # $h/$branch )
-  OLD_COMMIT=$( git rev-parse $gr/$branch)
+  OLD_COMMIT=$( git rev-parse $branch)
   NEW_COMMIT=$( git rev-parse FETCH_HEAD )
   git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
   if ( git merge FETCH_HEAD ); then          # GIT -n HEAD
