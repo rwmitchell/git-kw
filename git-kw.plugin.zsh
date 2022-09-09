@@ -252,7 +252,10 @@ function gm() {                              # git merge
   OLD_COMMIT=$( git rev-parse $branch)
   NEW_COMMIT=$( git rev-parse FETCH_HEAD )
   git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
-  if ( git merge FETCH_HEAD ); then          # GIT -n HEAD
+  # -ff is disabled for 'git merge' in .gitconfig
+  # to avoid collapsing branches on merge.
+  # re-enable for a regular merge
+  if ( git merge --ff --log FETCH_HEAD ); then     # GIT -n HEAD
     ssay "merged from FETCH_HEAD"
   else
     ((rc+=$?))
