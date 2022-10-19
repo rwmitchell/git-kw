@@ -213,7 +213,11 @@ function gf() {
       git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
       printf "\n"
 #     git log HEAD...FETCH_HEAD
+      # determine which log approach is better
+      printf "git log %s/%s...FETCH_HEAD\n" "$h" "$branch"
       git log $h/$branch...FETCH_HEAD
+      printf "\ngit lg HEAD...FETCH_HEAD\n"
+      git lg HEAD..FETCH_HEAD
       printf "\n"
       local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
       printf "%d files from %s\n" "$cnt" "$h"
