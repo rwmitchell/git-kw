@@ -203,30 +203,35 @@ function gf() {
   for h in $gr; do
     cline 4
     printf "Remote: %s\n" "$h"
-    local rid=($( git ls-remote $h $branch ))   # HEAD ))
-    rid=$rid[1]
-    if [[ $lid != $rid ]]; then
-      OLD_COMMIT=$( git rev-parse $h/$branch )
-      git fetch $h $branch  # HEAD
-      NEW_COMMIT=$( git rev-parse FETCH_HEAD )
-      printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
-      git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
-      printf "\n"
-#     git log HEAD...FETCH_HEAD
-      # determine which log approach is better
-      printf "git log %s/%s...FETCH_HEAD\n" "$h" "$branch"
-      git log $h/$branch...FETCH_HEAD
-      printf "\ngit lg HEAD...FETCH_HEAD\n"
-      git lg HEAD..FETCH_HEAD
-      printf "\n"
-      local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
-      printf "%d files from %s\n" "$cnt" "$h"
-      ssay "Got $cnt files from $h for $rdir!"
-      # Checking OLD/NEW here shows if there is an actual transfer
-      ((rc+=1))
-    else
-      printf "%s matches %s\n" "$h" "$branch"
+    pth=$( git remote get-url $h )
+    if [[ $pth == ssh* || -e $pth ]]; then
+      local rid=($( git ls-remote $h $branch ))   # HEAD ))
+      rid=$rid[1]
+      if [[ $lid != $rid ]]; then
+        OLD_COMMIT=$( git rev-parse $h/$branch )
+        git fetch $h $branch  # HEAD
+        NEW_COMMIT=$( git rev-parse FETCH_HEAD )
+        printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
+        git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
+        printf "\n"
+  #     git log HEAD...FETCH_HEAD
+        # determine which log approach is better
+        printf "git log %s/%s...FETCH_HEAD\n" "$h" "$branch"
+        git log $h/$branch...FETCH_HEAD
+        printf "\ngit lg HEAD...FETCH_HEAD\n"
+        git lg HEAD..FETCH_HEAD
+        printf "\n"
+        local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
+        printf "%d files from %s\n" "$cnt" "$h"
+        ssay "Got $cnt files from $h for $rdir!"
+        # Checking OLD/NEW here shows if there is an actual transfer
+        ((rc+=1))
+      else
+        printf "%s matches %s\n" "$h" "$branch"
       [[ $silent < 1 ]] && ssay "$h matches local"
+      fi
+    else
+      printf "%s not available\n" $h
     fi
   done
 
