@@ -19,14 +19,14 @@ alias --   ga="git add"
 alias --  gau="git add --update"
 
 alias --   gb="git branch"
-alias --  gba="git branch -a"
+alias --  gba="git branch --all"
 
 alias --   gd="git diff --ignore-space-change"
 alias -- gcda="git diff --cached"
 alias --  gds="git diff --staged"
 alias --  gdw="git diff --word-diff"
 
-alias --  gss="git status -s"
+alias --  gss="git status --short --branch"
 # These aliases match those in OMZ/plugins/git - END
 
 # Git Update Keywords
