@@ -119,7 +119,9 @@ function gp() {
     fi
   done
 
-  return $rc
+  [[ $rc == 1 ]] && ssay "Pushed files to $h"
+  [[ $rc  > 1 ]] && ssay "Pushed files to $rc hosts"
+  return 0    # $rc   # 2022-11-15 stop zsh from announcing error code
 }
 
 # Git Check Remote - are remotes and local in-sync ?
