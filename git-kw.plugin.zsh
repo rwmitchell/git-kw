@@ -91,6 +91,9 @@ function gc() {
 compdef _git gc=git-commit
 
 function gp() {
+  git status > /dev/null  # only get result code or show error
+  [[ $? == 0 ]] || return 0
+
   local root=$( git rev-parse --show-toplevel )
   local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local rc=0
@@ -180,6 +183,9 @@ function gcrr() {
 
 # Git Fetch and report # of files changed
 function gf() {
+  git status > /dev/null  # only get result code or show error
+  [[ $? == 0 ]] || return 0
+
   local root=$( git rev-parse --show-toplevel )
   local rdir=$(basename $root )
   local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
@@ -253,6 +259,9 @@ function gfr() {                             # check subdirs
 }
 
 function gm() {                              # git merge
+  git status > /dev/null  # only get result code or show error
+  [[ $? == 0 ]] || return 0
+
   local root=$( git rev-parse --show-toplevel )
   local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local cmd=$root/.git_upd_cmd
@@ -295,6 +304,9 @@ alias gsw='git switch'
 alias gswc='git switch -c'
 
 function grename() {
+  git status > /dev/null  # only get result code or show error
+  [[ $? == 0 ]] || return 0
+
   if [[ -z "$1" || -z "$2" ]]; then
     echo "Usage: $0 old_branch new_branch"
     return 1
