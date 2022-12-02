@@ -22,7 +22,7 @@ alias --   gb="git branch"
 alias --  gba="git branch --all"
 
 alias --   gd="git diff --ignore-space-change"
-alias -- gcda="git diff --cached"
+alias -- gdca="git diff --cached"
 alias --  gds="git diff --staged"
 alias --  gdw="git diff --word-diff"
 
@@ -304,6 +304,30 @@ function gmr() {
   done
 }
 
+function gps() {         # git push status - show files to be pushed
+  git status > /dev/null  # only get result code or show error
+  [[ $? == 0 ]] || return 0
+
+  local root=$( git rev-parse --show-toplevel )
+  local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
+  local rc=0
+  echo $root
+  local gr=($( git remote show ));
+  local lid=$( git rev-parse HEAD );
+  for h in $gr; do
+    cline 4
+    printf "Remote: %s/%s\n" "$h/$branch"
+    local rid=$( git diff --color --stat --cached $h/$branch )
+    if [[ $rid ]]; then
+      echo $rid
+    else
+      ssay "$h is current"
+    fi
+  done
+
+  [[ $rc  > 0 ]] && ssay "Need to update $rc repos\n"
+  return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
+}
 # Copied from OMZ git plugin
 
 alias gsw='git switch'
