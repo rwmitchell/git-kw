@@ -287,8 +287,8 @@ function gm() {                              # git merge
 
   [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
 
-  [[ $rc == 1 ]] && ssay "Fetched files from $h"
-  [[ $rc  > 1 ]] && ssay "Fetched files from $rc hosts"
+  [[ $rc == 1 ]] && ssay "Merged files from $h"
+  [[ $rc  > 1 ]] && ssay "Merged files from $rc hosts"
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
 
