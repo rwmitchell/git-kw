@@ -124,7 +124,7 @@ function gp() {
 
   [[ $rc == 1 ]] && ssay "Pushed files to $h"
   [[ $rc  > 1 ]] && ssay "Pushed files to $rc hosts"
-  return 0    # $rc   # 2022-11-15 stop zsh from announcing error code
+  return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
 
 # Git Check Remote - are remotes and local in-sync ?
@@ -243,7 +243,10 @@ function gf() {
     fi
   done
 
-  return $rc
+  [[ $rc == 1 ]] && ssay "Fetched files from $h"
+  [[ $rc  > 1 ]] && ssay "Fetched files from $rc hosts"
+  return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
+
 }
 
 function gfr() {                             # check subdirs
@@ -263,12 +266,12 @@ function gm() {                              # git merge
   [[ $? == 0 ]] || return 0
 
   local root=$( git rev-parse --show-toplevel )
-  local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
+  local branch=$( git_current_branch )       # defined in OMZ/lib/git.zsh
   local cmd=$root/.git_upd_cmd
 # local gr=($( git remote show ));
   local rc=0
   echo $root
-# OLD_COMMIT=$( git rev-parse HEAD)     # $h/$branch )
+# OLD_COMMIT=$( git rev-parse HEAD)          # $h/$branch )
   OLD_COMMIT=$( git rev-parse $branch)
   NEW_COMMIT=$( git rev-parse FETCH_HEAD )
   git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
@@ -279,11 +282,14 @@ function gm() {                              # git merge
     ssay "merged from FETCH_HEAD"
   else
     ((rc+=$?))
-    ssay "that as unexpected"                # to determine when this happens
+    ssay "that was unexpected"               # to determine when this happens
   fi
 
   [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
-  return $rc
+
+  [[ $rc == 1 ]] && ssay "Fetched files from $h"
+  [[ $rc  > 1 ]] && ssay "Fetched files from $rc hosts"
+  return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
 
 function gmr() {
