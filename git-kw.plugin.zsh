@@ -308,6 +308,21 @@ function gps() {         # git push status - show files to be pushed
   git status > /dev/null  # only get result code or show error
   [[ $? == 0 ]] || return 0
 
+  local arg silent=0
+  for arg in $@; do
+    case $arg in
+      -s|--silent) (( silent+=1 ));;
+      -ss) (( silent+=2 ));;
+      -h|--help  )
+        printf "-s|--silent : (1) silence 'in sync' message\n"
+        printf "-s|--silent : (2) silence 'not in sync' message\n"
+        return;;
+      *) printf "Unexpected: %s\n" "$arg"
+        return;;
+    esac
+  done
+
+
   local root=$( git rev-parse --show-toplevel )
   local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local rc=0
@@ -321,13 +336,26 @@ function gps() {         # git push status - show files to be pushed
     if [[ $rid ]]; then
       echo $rid
     else
-      ssay "$h is current"
+      [[ $silent < 1 ]] && ssay "$h is current"
     fi
   done
 
-  [[ $rc  > 0 ]] && ssay "Need to update $rc repos\n"
+  [[ $silent < 2 && $rc  > 0 ]] && ssay "Need to update $rc repos\n"
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
+
+function gpsr() {
+  setopt localoptions noautopushd nopushdignoredups
+  for g in */.git
+  do
+    d=$( dirname $g )
+    printf "%s\n" "$d"
+    cd $d
+    gps -s
+    cd -
+  done
+}
+
 # Copied from OMZ git plugin
 
 alias gsw='git switch'
