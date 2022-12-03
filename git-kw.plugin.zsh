@@ -334,13 +334,14 @@ function gps() {         # git push status - show files to be pushed
     printf "Remote: %s/%s\n" "$h/$branch"
     local rid=$( git diff --color --stat --cached $h/$branch )
     if [[ $rid ]]; then
+      ((rc+=1))
       echo $rid
     else
       [[ $silent < 1 ]] && ssay "$h is current"
     fi
   done
 
-  [[ $silent < 2 && $rc  > 0 ]] && ssay "Need to update $rc repos\n"
+  [[ $silent < 2 && $rc  > 0 ]] && ssay "Need to update $rc repos"
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
 
