@@ -181,8 +181,8 @@ function gcrr() {
   done
 }
 
-# Git Fetch and report # of files changed
-function gf() {
+# Git Fetch and report # of files changed from all repos
+function gfa() {
   git status > /dev/null  # only get result code or show error
   [[ $? == 0 ]] || return 0
 
@@ -222,7 +222,7 @@ function gf() {
         printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
         git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
         printf "\n"
-  #     git log HEAD...FETCH_HEAD
+#       git log HEAD...FETCH_HEAD
         # determine which log approach is better
         printf "git log %s/%s...FETCH_HEAD\n" "$h" "$branch"
         git log $h/$branch...FETCH_HEAD
@@ -244,6 +244,80 @@ function gf() {
   done
 
   [[ $rc == 1 ]] && ssay "Fetched files from $h"
+  [[ $rc  > 1 ]] && ssay "Fetched files from $rc hosts"
+  return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
+
+}
+
+# Only fetch from origin
+function gf() {
+  git status > /dev/null  # only get result code or show error
+  [[ $? == 0 ]] || return 0
+
+  local root=$( git rev-parse --show-toplevel )
+  local rdir=$(basename $root )
+  local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
+  local rc=0
+  printf "Root: %s\n" "$root"
+  local gr=($( git remote show ));
+  local lid=$( git rev-parse HEAD );
+
+  local repo="origin"
+  printf "%d repos\n" $#gr
+  # ${gr[(ie)$repo]}  <-- this returns position of repo in gr, or size+1
+  if [[ ${gr[(ie)$repo]} -gt ${#gr} ]]; then
+    printf "origin repo not specified\n"
+    return
+  fi
+
+  local arg silent=0
+  for arg in $@; do
+    case $arg in
+      -s|--silent) (( silent+=1 ));;
+      -ss) (( silent+=2 ));;
+      -h|--help  )
+        printf "-s|--silent : (1) silence 'in sync' message\n"
+        printf "-s|--silent : (2) silence 'not in sync' message\n"
+        return;;
+      *) printf "Unexpected: %s\n" "$arg"
+        return;;
+    esac
+  done
+
+  cline 4
+  printf "Remote: %s\n" "$repo"
+  pth=$( git remote get-url $repo )
+  if [[ $pth == ssh* || -e $pth ]]; then
+    local rid=($( git ls-remote $repo $branch ))   # HEAD ))
+    rid=$rid[1]
+    if [[ $lid != $rid ]]; then
+      OLD_COMMIT=$( git rev-parse $repo/$branch )
+      git fetch $repo $branch  # HEAD
+      NEW_COMMIT=$( git rev-parse FETCH_HEAD )
+      printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$repo"
+      git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
+      printf "\n"
+#     git log HEAD...FETCH_HEAD
+      # determine which log approach is better
+      printf "git log %s/%s...FETCH_HEAD\n" "$repo" "$branch"
+      git log $repo/$branch...FETCH_HEAD
+      printf "\ngit lg HEAD...FETCH_HEAD\n"
+      git lg HEAD..FETCH_HEAD
+      printf "\n"
+      local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
+      printf "%d files from %s\n" "$cnt" "$repo"
+      ssay "Got $cnt files from $repo for $rdir!"
+      # Checking OLD/NEW here shows if there is an actual transfer
+      ((rc+=1))
+    else
+      printf "%s matches %s\n" "$repo" "$branch"
+    [[ $silent < 1 ]] && ssay "$repo matches local"
+    fi
+  else
+    printf "%s not available\n" $repo
+  fi
+
+  [[ $rc == 1 ]] && ssay "Fetched files from $repo"
   [[ $rc  > 1 ]] && ssay "Fetched files from $rc hosts"
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 
