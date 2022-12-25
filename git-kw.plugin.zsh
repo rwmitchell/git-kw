@@ -335,6 +335,18 @@ function gfr() {                             # check subdirs
   done
 }
 
+function gdr() {                             # check subdirs
+  setopt localoptions noautopushd nopushdignoredups
+  for repo in */.git; do
+    local rdir=$(dirname $repo )
+    echo $rdir
+    cd $rdir
+    git diff --ignore-space-change
+    cd -
+    yline
+  done
+}
+
 function gm() {                              # git merge
   git status > /dev/null  # only get result code or show error
   [[ $? == 0 ]] || return 0
