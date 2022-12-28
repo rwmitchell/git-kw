@@ -10,6 +10,18 @@
 #ident "$File$"
 #
 /* 3 Last Commit msgs
-  $Log$
+  $Log:
+  Sat, 12 Mar 2022 14:50:40 -0500
+  Fix/Test Log keyword expansion
+  
+  Sat, 12 Mar 2022 14:38:26 -0500
+  Add Log as a keyword
+  
+  Log will be expanded to last 3 log entries.
+  Log keyword requires 2 lines to delimit start/end
+  
+  Sat, 12 Mar 2022 12:04:06 -0500
+  Test Log keyword 
+  :Log$
  */
 
