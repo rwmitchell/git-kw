@@ -9,8 +9,9 @@ alias --   gs="git status"
 alias --  gdo="git difftool"      # uses opendiff
 alias -- gdoy="git difftool -y"   # uses opendiff, no prompting
 alias -- glog="git glog"
+alias --  gpl="git glog HEAD...origin/HEAD" # to-be-pushed log
 alias --  glg="git lg"         # fancier but shorter log
-alias --  glm="git log HEAD..FETCH_HEAD"
+alias --  glm="git log HEAD..FETCH_HEAD"    # fetched log
 alias --  grv="git remote -v"  # show remotes with url
 alias --  gdu="git diff --stat --cached origin/main"     # needs to be in a function
 
@@ -25,6 +26,8 @@ alias --   gd="git diff --ignore-space-change"
 alias -- gdca="git diff --cached"
 alias --  gds="git diff --staged"
 alias --  gdw="git diff --word-diff"
+alias --  gdf="git diff HEAD..FETCH_HEAD"                # diff after gf
+alias -- gdup="git diff @{upstream}"
 
 alias --  gss="git status --short --branch"
 # These aliases match those in OMZ/plugins/git - END
