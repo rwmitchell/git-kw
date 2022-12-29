@@ -44,14 +44,19 @@ function guk() {
 
   printf "Update: %s\n" $fl
 
+  local rsp="X"
   for file in $fl
   do
-    rsp=$(prompt -p "delete ?: $file" "yYnNaq")
+
+    if [[ $rsp != "Y" ]]; then
+      rsp=$(prompt -p "delete ?: $file" "yYnNaq")
+    fi
 
     case "$rsp" in
       n)                  ;;    # skip
       N|a|q) break        ;;    # skip and exit
-      y|Y)   rm $file;          # do this file
+      y|Y)   printf "Resetting %s\n" $file;
+             rm $file;          # do this file
              git checkout -f $file ;;
     esac
   done
