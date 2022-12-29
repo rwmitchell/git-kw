@@ -116,7 +116,7 @@ function gp() {
 #       OLD_COMMIT=$( git rev-parse $h/$branch )
         git push $h HEAD
 #       NEW_COMMIT=$( git rev-parse $h/$branch )
-        ((rc+=1))
+        [[ $? == 0 ]] && ((rc+=1))
       else
         ssay "$h is current"
       fi
@@ -126,7 +126,7 @@ function gp() {
   done
 
   [[ $rc == 1 ]] && ssay "Pushed files to $h"
-  [[ $rc  > 1 ]] && ssay "Pushed files to $rc hosts"
+  [[ $rc  > 1 ]] && ssay "Pushed files to $rc of $#gr hosts"
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
 
