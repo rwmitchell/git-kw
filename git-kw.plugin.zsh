@@ -103,6 +103,7 @@ function gp() {
   echo $root
   local gr=($( git remote show ));
   local lid=$( git rev-parse HEAD );
+  local th
   for h in $gr; do
     cline 4
     printf "Remote: %s\n" "$h"
@@ -115,6 +116,7 @@ function gp() {
         # Checking OLD/NEW here shows if there is an actual transfer
 #       OLD_COMMIT=$( git rev-parse $h/$branch )
         git push $h HEAD
+        th=$h
 #       NEW_COMMIT=$( git rev-parse $h/$branch )
         [[ $? == 0 ]] && ((rc+=1))
       else
@@ -125,7 +127,7 @@ function gp() {
     fi
   done
 
-  [[ $rc == 1 ]] && ssay "Pushed files to $h"
+  [[ $rc == 1 ]] && ssay "Pushed files to $th"
   [[ $rc  > 1 ]] && ssay "Pushed files to $rc of $#gr hosts"
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
