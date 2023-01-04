@@ -9,11 +9,11 @@ alias --   gs="git status"
 alias --  gdo="git difftool"      # uses opendiff
 alias -- gdoy="git difftool -y"   # uses opendiff, no prompting
 alias -- glog="git glog"
-alias --  gpl="git glog HEAD...origin/HEAD" # to-be-pushed log
+alias --  gpl="git glog HEAD...ORIG_HEAD"   # to-be-pushed log
 alias --  glg="git lg"         # fancier but shorter log
 alias --  glm="git log HEAD..FETCH_HEAD"    # fetched log
 alias --  grv="git remote -v"  # show remotes with url
-alias --  gdu="git diff --stat --cached origin/main"     # needs to be in a function
+alias --  gdu="git diff --stat --cached ORIG_HEAD"     # needs to be in a function
 
 # These aliases match those in OMZ/plugins/git - START
 alias --   ga="git add"
@@ -90,9 +90,10 @@ function gc() {
   local root=$( git rev-parse --show-toplevel )
   local cmd=$root/.git_cmt_cmd
   local rc=0
-  git commit $@                              # GIT -n HEAD
-  echo $root
+  git commit $@
   rc=$?
+  [[ $rc -eq 0 ]] && guk
+  echo $root
   [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
   return $rc
 }
