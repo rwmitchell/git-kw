@@ -4,32 +4,32 @@
 # $Source$
 # $Date$
 #
-alias -- gllf="git diff-tree --name-only --no-commit-id -r -a HEAD"   # List last files committed
-alias --   gs="git status"
-alias --  gdo="git difftool"      # uses opendiff
-alias -- gdoy="git difftool -y"   # uses opendiff, no prompting
-alias -- glog="git glog"
-alias --  gpl="git glog HEAD...ORIG_HEAD"   # to-be-pushed log
-alias --  glg="git lg"         # fancier but shorter log
-alias --  glm="git log HEAD..FETCH_HEAD"    # fetched log
-alias --  grv="git remote -v"  # show remotes with url
-alias --  gdu="git diff --stat --cached ORIG_HEAD"     # needs to be in a function
+alias -- gllf="is_git && git diff-tree --name-only --no-commit-id -r -a HEAD"   # List last files committed
+alias --   gs="is_git && git status"
+alias --  gdo="is_git && git difftool"      # uses opendiff
+alias -- gdoy="is_git && git difftool -y"   # uses opendiff, no prompting
+alias -- glog="is_git && git glog"
+alias --  gpl="is_git && git glog HEAD...ORIG_HEAD"   # to-be-pushed log
+alias --  glg="is_git && git lg"         # fancier but shorter log
+alias --  glm="is_git && git log HEAD..FETCH_HEAD"    # fetched log
+alias --  grv="is_git && git remote -v"  # show remotes with url
+alias --  gdu="is_git && git diff --stat --cached ORIG_HEAD"     # needs to be in a function
 
 # These aliases match those in OMZ/plugins/git - START
-alias --   ga="git add"
-alias --  gau="git add --update"
+alias --   ga="is_git && git add"
+alias --  gau="is_git && git add --update"
 
-alias --   gb="git branch"
-alias --  gba="git branch --all"
+alias --   gb="is_git && git branch"
+alias --  gba="is_git && git branch --all"
 
-alias --   gd="git diff --ignore-space-change"
-alias -- gdca="git diff --cached"
-alias --  gds="git diff --staged"
-alias --  gdw="git diff --word-diff"
-alias --  gdf="git diff HEAD..FETCH_HEAD"                # diff after gf
-alias -- gdup="git diff @{upstream}"
+alias --   gd="is_git && git diff --ignore-space-change"
+alias -- gdca="is_git && git diff --cached"
+alias --  gds="is_git && git diff --staged"
+alias --  gdw="is_git && git diff --word-diff"
+alias --  gdf="is_git && git diff HEAD..FETCH_HEAD"                # diff after gf
+alias -- gdup="is_git && git diff @{upstream}"
 
-alias --  gss="git status --short --branch"
+alias --  gss="is_git && git status --short --branch"
 # These aliases match those in OMZ/plugins/git - END
 
 # Git Update Keywords
