@@ -476,3 +476,35 @@ function grename() {
   fi
 }
 
+# https://queirozf.com/entries/git-examples-searching-the-git-history#list-commits-including-string-in-content
+function gitgrep() {
+  [[ $# == 0 || $1 == "-h" ]] \
+    && printf "$0 STRING FILE(s)\n" \
+    && printf "\tShow log for commit with STRING\n" \
+    && return
+
+  local PAT=$1; shift;
+
+  git log --name-status -S"$PAT" $@
+}
+function gitgreprgx() {
+  [[ $# == 0 || $1 == "-h" ]] \
+    && printf "$0 REGEX FILE(s)\n" \
+    && printf "\tShow log for commit with REGEX\n" \
+    && return
+
+  local PAT=$1; shift;
+
+  git log --name-status -G"$PAT" $@
+}
+
+function gcat() {
+  [[ $# < 2 || $1 == "-h" ]] \
+    && printf "$0 COMMITID FILE\n" \
+    && printf "\tShow file as of COMMITID\n" \
+    && return
+
+  git show $1:$2
+
+}
+compdef _git gcat=git-show
