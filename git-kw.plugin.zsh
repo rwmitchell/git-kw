@@ -477,7 +477,7 @@ function grename() {
 }
 
 # https://queirozf.com/entries/git-examples-searching-the-git-history#list-commits-including-string-in-content
-function gitgrep() {
+function ggrep() {
   [[ $# == 0 || $1 == "-h" ]] \
     && printf "$0 STRING FILE(s)\n" \
     && printf "\tShow log for commit with STRING\n" \
@@ -487,7 +487,7 @@ function gitgrep() {
 
   git log --name-status -S"$PAT" $@
 }
-function gitgreprgx() {
+function ggreprgx() {
   [[ $# == 0 || $1 == "-h" ]] \
     && printf "$0 REGEX FILE(s)\n" \
     && printf "\tShow log for commit with REGEX\n" \
