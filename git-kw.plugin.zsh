@@ -14,7 +14,7 @@ alias --  glg="is_git && git lg"         # fancier but shorter log
 alias --  glm="is_git && git log HEAD..FETCH_HEAD"    # fetched log
 alias --  grv="is_git && git remote -v"  # show remotes with url
 alias --  gdu="is_git && git diff --stat --cached ORIG_HEAD"     # needs to be in a function
-
+alias --   gi="is_git && git fetch --dry-run -v"
 # These aliases match those in OMZ/plugins/git - START
 alias --   ga="is_git && git add"
 alias --  gau="is_git && git add --update"
@@ -357,6 +357,20 @@ function gdr() {                             # check subdirs
     yline
   done
 }
+
+function gir() {                             # check incoming dry-run
+  setopt localoptions noautopushd nopushdignoredups
+  for repo in */.git; do
+    local rdir=$(dirname $repo )
+    echo $rdir
+    cd $rdir
+    git fetch --dry-run -v
+    [[ $? != 0 ]] && ssay "Check $rdir"
+    cd -
+    yline
+  done
+}
+
 
 function gm() {                              # git merge
   git status > /dev/null  # only get result code or show error
