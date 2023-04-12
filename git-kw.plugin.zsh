@@ -9,6 +9,9 @@ alias --   gs="is_git && git status"
 alias --  gdo="is_git && git difftool"      # uses opendiff
 alias -- gdoy="is_git && git difftool -y"   # uses opendiff, no prompting
 alias -- glog="is_git && git glog"
+
+# works great when there are commits to be pushed
+# else it shows the entire log
 # alias --  gpl="is_git && git glog HEAD...ORIG_HEAD"   # to-be-pushed log
 alias --  glg="is_git && git lg"         # fancier but shorter log
 alias --  glm="is_git && git log HEAD..FETCH_HEAD"    # fetched log
@@ -176,8 +179,8 @@ function gpl() {
       printf "\n"
       [[ $silent < 2 ]] && ssay "$root not in sync with $h"
       ((rc+=1))
-    else
-      [[ $silent < 1 ]] && ssay "$h matches $root"
+#   else
+#     [[ $silent < 1 ]] && ssay "$h matches $root"
     fi
   done
 
