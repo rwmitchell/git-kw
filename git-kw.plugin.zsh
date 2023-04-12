@@ -9,7 +9,7 @@ alias --   gs="is_git && git status"
 alias --  gdo="is_git && git difftool"      # uses opendiff
 alias -- gdoy="is_git && git difftool -y"   # uses opendiff, no prompting
 alias -- glog="is_git && git glog"
-alias --  gpl="is_git && git glog HEAD...ORIG_HEAD"   # to-be-pushed log
+# alias --  gpl="is_git && git glog HEAD...ORIG_HEAD"   # to-be-pushed log
 alias --  glg="is_git && git lg"         # fancier but shorter log
 alias --  glm="is_git && git log HEAD..FETCH_HEAD"    # fetched log
 alias --  grv="is_git && git remote -v"  # show remotes with url
@@ -138,7 +138,54 @@ function gp() {
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
 
+# Git Show Commit to be pushed
+# 2023-04-12 same as gcr() with different log command
+function gpl() {
+  local arg silent=0
+  for arg in $@; do
+    case $arg in
+      -s|--silent) (( silent+=1 ));;
+      -ss) (( silent+=2 ));;
+      -h|--help  )
+        printf "-s|--silent : (1) silence 'in sync' message\n"
+        printf "-s|--silent : (2) silence 'not in sync' message\n"
+        return;;
+      *) printf "Unexpected: %s\n" "$arg"
+        return;;
+    esac
+  done
+
+  local root=$(basename $( git rev-parse --show-toplevel ) )
+  local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
+  local rc=0
+  echo $root
+  local gr=($( git remote show ));
+  local lid=$( git rev-parse HEAD );
+  for h in $gr; do
+    cline 4
+    printf "Remote: %s\n" "$h"
+    local rid=($( git ls-remote $h HEAD ))
+    rid=$rid[1]
+    if [[ $lid != $rid ]]; then
+      printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
+      printf "\n"
+      git diff --name-only HEAD..$h/$branch
+      printf "\n"
+      git log HEAD...$h/$branch
+#     git log HEAD...FETCH_HEAD
+      printf "\n"
+      [[ $silent < 2 ]] && ssay "$root not in sync with $h"
+      ((rc+=1))
+    else
+      [[ $silent < 1 ]] && ssay "$h matches $root"
+    fi
+  done
+
+  return $rc
+}
+
 # Git Check Remote - are remotes and local in-sync ?
+# 2023-04-12 does this do anything different for new fetch commits?
 function gcr() {
   local arg silent=0
   for arg in $@; do
@@ -168,8 +215,9 @@ function gcr() {
     if [[ $lid != $rid ]]; then
       printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
       printf "\n"
-      git diff --name-only HEAD..FETCH_HEAD
+      git diff --name-only HEAD..$h/$branch
       printf "\n"
+#     git log HEAD...$h/$branch
       git log HEAD...FETCH_HEAD
       printf "\n"
       [[ $silent < 2 ]] && ssay "$root not in sync with $h"
