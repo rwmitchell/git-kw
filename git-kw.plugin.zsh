@@ -164,6 +164,8 @@ function gpl() {
   echo $root
   local gr=($( git remote show ));
   local lid=$( git rev-parse HEAD );
+  local md5
+  local ts
   for h in $gr; do
     cline 4
     printf "Remote: %s\n" "$h"
@@ -174,7 +176,11 @@ function gpl() {
       printf "\n"
       git diff --name-only HEAD..$h/$branch
       printf "\n"
-      git log HEAD...$h/$branch
+      ts=$( git log --decorate=short --color HEAD...$h/$branch )
+      if [[ $md5 != $( echo $ts | md5 ) ]]; then
+        md5=$( echo $ts | md5 )
+        echo $ts
+      fi
 #     git log HEAD...FETCH_HEAD
       printf "\n"
       [[ $silent < 2 ]] && ssay "$root not in sync with $h"
