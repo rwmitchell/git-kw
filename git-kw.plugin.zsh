@@ -450,13 +450,14 @@ function gm() {                              # git merge
     ssay "merged from FETCH_HEAD"
   else
     ((rc+=$?))
-    ssay "that was unexpected"               # to determine when this happens
+    ssay "that was unexpected - $rc"               # to determine when this happens
   fi
 
   [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
 
-  [[ $rc == 1 ]] && ssay "Merged files from $h"
-  [[ $rc  > 1 ]] && ssay "Merged files from $rc hosts"
+# 2023-04-20: what? rc is an error code, not host count
+# [[ $rc == 1 ]] && ssay "Merged files"
+# [[ $rc  > 1 ]] && ssay "Merged files from $rc hosts"
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
 
@@ -470,6 +471,48 @@ function gmr() {
     cd -
     yline
   done
+}
+
+function gmb() {                              # git merge branch
+  git status > /dev/null  # only get result code or show error
+  [[ $? == 0 ]] || return 0
+
+  [[ $# -lt 1 || $1 == "-h" ]] \
+    && printf "$0 branch_name\n" \
+    && printf "\tMerge named branch\n" \
+    && git branch --list \
+    && return
+
+  local branch=$1
+
+  if [[ $(git rev-parse --verify $branch 2> /dev/null ) ]]; then
+    printf "Checking: %s\n" $branch
+  else
+     printf "$branch not available\n"
+     return
+  fi
+
+
+  local root=$( git rev-parse --show-toplevel )
+  local cmd=$root/.git_upd_cmd
+  local rc=0
+  printf "    Root: %s\n" $root
+  OLD_COMMIT=$( git rev-parse HEAD )
+  NEW_COMMIT=$( git rev-parse $branch )
+
+  git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
+
+  if ( git merge --no-ff --log $branch ); then     # GIT -n HEAD
+    ssay "merged from $branch"
+  else
+    ((rc+=$?))
+    printf "Error code: %d\n" $rc
+    ssay "that was unexpected - $rc"               # to determine when this happens
+  fi
+
+  [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
+
+  return 0
 }
 
 function gps() {         # git push status - show files to be pushed
@@ -525,10 +568,10 @@ function gpsr() {
   done
 }
 
-# Copied from OMZ git plugin
-
-alias gsw='git switch'
-alias gswc='git switch -c'
+# OMZ git plugin uses gsw and gswc
+# this matches using gmb() to merge branch
+alias gsb='git switch'             //            switch to branch
+alias gsbc='git switch -c'         // create and switch to branch
 
 function grename() {
   git status > /dev/null  # only get result code or show error
@@ -542,7 +585,7 @@ function grename() {
   # Rename branch locally
   git branch -m "$1" "$2"
   # Rename branch in origin remote
-  if git push origin :"$1"; then
+  if ( git push origin :"$1" ); then
     git push --set-upstream origin "$2"
   fi
 }
