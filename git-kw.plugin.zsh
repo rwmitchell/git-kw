@@ -14,7 +14,7 @@ alias -- glog="is_git && git glog"
 # else it shows the entire log
 # alias --  gpl="is_git && git glog HEAD...ORIG_HEAD"   # to-be-pushed log
 alias --   glg="is_git && git lg"         # fancier but shorter log
-alias --  glgb="is_git && git log --all --graph --simplify-by-decoration --pretty='format:%C(auto)%d - %s'"
+alias --  glgb="is_git && git log --all --graph --simplify-by-decoration --pretty='format:%C(green)%as %C(auto)%d - %s'"
 alias -- glgba="is_git && git log --all --graph --simplify-by-decoration --pretty='format:%C(blue)%h %C(green)%as %C(yellow)%al%C(auto)%d - %s'"
 alias --   glm="is_git && git log HEAD..FETCH_HEAD"    # fetched log
 alias --   grv="is_git && git remote -v"  # show remotes with url
