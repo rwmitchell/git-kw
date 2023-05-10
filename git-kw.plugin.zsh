@@ -4,11 +4,12 @@
 # $Source$
 # $Date$
 #
-alias -- gllf="is_git && git diff-tree --name-only --no-commit-id -r -a HEAD"   # List last files committed
-alias --   gs="is_git && git status"
-alias --  gdo="is_git && git difftool"      # uses opendiff
-alias -- gdoy="is_git && git difftool -y"   # uses opendiff, no prompting
-alias -- glog="is_git && git glog"
+alias --  gllf="is_git && git diff-tree --name-only --no-commit-id -r -a HEAD"   # List last files committed
+alias --    gs="is_git && git status"
+alias --   gdo="is_git && git difftool"      # uses opendiff
+alias --  gdoy="is_git && git difftool -y"   # uses opendiff, no prompting
+alias --  glog="is_git && git glog"
+alias -- glogp="is_git && git glogp"         # show patches
 
 # works great when there are commits to be pushed
 # else it shows the entire log
