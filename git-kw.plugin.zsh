@@ -14,8 +14,6 @@ alias -- glog="is_git && git glog"
 # else it shows the entire log
 # alias --  gpl="is_git && git glog HEAD...ORIG_HEAD"   # to-be-pushed log
 alias --   glg="is_git && git lg"         # fancier but shorter log
-alias --  glgb="is_git && git log --all --graph --simplify-by-decoration --pretty='format:%C(green)%as %C(auto)%d - %s'"
-alias -- glgba="is_git && git log --all --graph --simplify-by-decoration --pretty='format:%C(blue)%h %C(green)%as %C(yellow)%al%C(auto)%d - %s'"
 alias --   glm="is_git && git log HEAD..FETCH_HEAD"    # fetched log
 alias --   grv="is_git && git remote -v"  # show remotes with url
 alias --   gdu="is_git && git diff --stat --cached ORIG_HEAD"     # needs to be in a function
@@ -23,6 +21,9 @@ alias --   gi="is_git && git fetch --dry-run -v"
 # These aliases match those in OMZ/plugins/git - START
 alias --   ga="is_git && git add"
 alias --  gau="is_git && git add --update"
+
+alias --  glgb="is_git && git log --all --graph --simplify-by-decoration --pretty='format:%C(green)%as %C(auto)%d - %s'"
+alias -- glgba="is_git && git log --all --graph --simplify-by-decoration --pretty='format:%C(cyan)%h %C(green)%as %C(yellow)%al%C(auto)%d - %s'"
 
 alias --   gb="is_git && git branch"
 alias --  gba="is_git && git branch --all"
