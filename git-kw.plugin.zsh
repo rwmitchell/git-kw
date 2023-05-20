@@ -615,6 +615,16 @@ function ggreprgx() {
 
   git log --name-status -G"$PAT" $@
 }
+function ggrepd() {
+  [[ $# == 0 || $1 == "-h" ]] \
+    && printf "$0 REGEX FILE(s)\n" \
+    && printf "\tShow diffs for commit with REGEX\n" \
+    && return
+
+  local PAT=$1; shift;
+
+  git log --patch -G"$PAT" $@
+}
 
 function gcat() {
   [[ $# < 2 || $1 == "-h" ]] \
