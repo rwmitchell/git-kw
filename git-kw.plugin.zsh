@@ -23,7 +23,7 @@ alias --   ga="is_git && git add"
 alias --  gau="is_git && git add --update"
 
 alias --   glg="is_git && git log --all --graph --abbrev-commit --decorate \
-                                  --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold yellow)%d%C(reset)'
+                                  --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold yellow)%d%C(reset)'"
 
 alias --  glgb="is_git && git log --all --graph --simplify-by-decoration \
                                   --pretty='format:%C(green)%as %C(auto)%d - %s'"
@@ -34,6 +34,16 @@ alias -- glgba="is_git && git log --all --graph --simplify-by-decoration \
 alias --  glgf="is_git && git log --all --graph --abbrev-commit --decorate \
                                   --name-status \
                                   --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold yellow)%d%C(reset)%n'"
+
+# to use to get commit date for applying to tags
+alias --   glgdt="git log --all --abbrev-commit --decorate \
+                                  --format=format:'%h|%ai|%s|%d'"
+
+function commit_date() {
+  [[ $1 == "" ]] && printf "Need Hash number\n" && return
+  glgdt | grep "$1" | awk -F'|' '{printf "%s\n", $2; }'
+}
+
 
 alias --   gb="is_git && git branch"
 alias --  gba="is_git && git branch --all"
