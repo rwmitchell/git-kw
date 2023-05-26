@@ -22,16 +22,19 @@ alias --   gi="is_git && git fetch --dry-run -v"
 alias --   ga="is_git && git add"
 alias --  gau="is_git && git add --update"
 
-alias --   glg="is_git && git log --all --graph --abbrev-commit --decorate \
+# 2023-05-25: remove --all from log output
+# without --all, log output starts with current HEAD
+
+alias --   glg="is_git && git log --graph --abbrev-commit --decorate \
                                   --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold yellow)%d%C(reset)'"
 
-alias --  glgb="is_git && git log --all --graph --simplify-by-decoration \
+alias --  glgb="is_git && git log --graph --simplify-by-decoration \
                                   --pretty='format:%C(green)%as %C(auto)%d - %s'"
 
-alias -- glgba="is_git && git log --all --graph --simplify-by-decoration \
+alias -- glgba="is_git && git log --graph --simplify-by-decoration \
                                   --pretty='format:%C(cyan)%h %C(green)%as %C(yellow)%al%C(auto)%d - %s'"
 
-alias --  glgf="is_git && git log --all --graph --abbrev-commit --decorate \
+alias --  glgf="is_git && git log --graph --abbrev-commit --decorate \
                                   --name-status \
                                   --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold yellow)%d%C(reset)%n'"
 
