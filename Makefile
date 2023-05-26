@@ -11,7 +11,7 @@
 REPO:=$(shell basename ${PWD})
 GITVERSION:='$(shell git show -s --date=format:"%F %T %z" --format="$(REPO) %ad %d %h %an %aE")'
 GITVERSION:=$(shell git show -s --date=format:"%F %T %z" --format="$(REPO) %h %d %ad %an %aE")
-GITVERSION:="\#define IMG_VERSION \"IMG_VERSION $(GITVERSION)\""
+GITVERSION:="\#define GKW_VERSION \"GKW_VERSION $(GITVERSION)\""
 
 
 CC_DEBUG_FLAGS    = -g3 -DDEBUG_ALL
