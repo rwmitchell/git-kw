@@ -12,6 +12,7 @@ if [[ $FN ]]; then
        s#\\\$Source.*\\\$#\\\$Source\\\$#; \
        s#\\\$Date.*\\\$#\\\$Date\\\$#;     \
        s#\\\$Auth.*\\\$#\\\$Auth\\\$#;     \
+       s#\\\$Vrsn.*\\\$#\\\$Vrsn\\\$#;     \
        s#\\\$File.*\\\$#\\\$File\\\$#;     \
        s#\\\$GLog.*\\\$#\\\$GLog\\\$#"     \
        < $FN
@@ -20,6 +21,7 @@ else
        s#\\\$Source.*\\\$#\\\$Source\\\$#; \
        s#\\\$Date.*\\\$#\\\$Date\\\$#;     \
        s#\\\$Auth.*\\\$#\\\$Auth\\\$#;     \
+       s#\\\$Vrsn.*\\\$#\\\$Vrsn\\\$#;     \
        s#\\\$File.*\\\$#\\\$File\\\$#"     \
   | sed -e '/$GLog:/,/:GLog\$/c\
   $GLog:\
