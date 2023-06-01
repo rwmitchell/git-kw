@@ -38,6 +38,11 @@ alias --  glgf="is_git && git log --graph --abbrev-commit --decorate \
                                   --name-status \
                                   --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold yellow)%d%C(reset)%n'"
 
+function gltag() {
+  git log --decorate --oneline --pretty=format:"%h %d %s" | \
+  awk '{ if ($2 ~ /\(tag:.*/) {gsub(/[()]/, "", $2); printf "(%s  ", $3 } else { printf "\t" } print }' | \
+  sed 's/ tag:.*)/ /'
+}
 # to use to get commit date for applying to tags
 alias --   glgdt="git log --all --abbrev-commit --decorate \
                                   --format=format:'%h|%ai|%s|%d'"
