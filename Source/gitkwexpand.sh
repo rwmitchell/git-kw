@@ -12,7 +12,7 @@ FQ=$( git rev-parse --show-toplevel )
 DT=$( git show -s --date=format:"%F %T %z" --format="%ad" )
 ID=$( git show -s --date=format:"%F %T %z" --format="$( basename $PWD) %ad %d %h" )
 AN=$( git show -s --format="%an <%aE>" )
-VN=$( git describe --tags --long --always --dirty )
+VN=$( git describe --tags --long --always )    # --dirty )
 
 # 2022-03-19: sed breaks on nur_util.c, disabling
 LG=$( git log -n 3 --format="%aD%n%B" -- $FN )
