@@ -155,7 +155,7 @@ function gp() {
         ssay "Updating $cnt files on $h!"
         # Checking OLD/NEW here shows if there is an actual transfer
 #       OLD_COMMIT=$( git rev-parse $h/$branch )
-        git push $h HEAD
+        git push $mytags $h HEAD
         th=$h
 #       NEW_COMMIT=$( git rev-parse $h/$branch )
         [[ $? == 0 ]] && ((rc+=1))
@@ -170,6 +170,11 @@ function gp() {
   [[ $rc == 1 ]] && ssay "Pushed files to $th"
   [[ $rc  > 1 ]] && ssay "Pushed files to $rc of $#gr hosts"
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
+}
+function gpt() {
+  mytags="--follow-tags"
+  gp $@
+  unset mytags
 }
 
 # Git Show Commit to be pushed
@@ -391,7 +396,7 @@ function gf() {
     rid=$rid[1]
     if [[ $lid != $rid ]]; then
       OLD_COMMIT=$( git rev-parse $repo/$branch )
-      git fetch $repo $branch  # HEAD
+      git fetch $mytags $repo $branch  # HEAD
       NEW_COMMIT=$( git rev-parse FETCH_HEAD )
       printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$repo"
       git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
@@ -420,6 +425,11 @@ function gf() {
   [[ $rc  > 1 ]] && ssay "Fetched files from $rc hosts"
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 
+}
+function gft() {
+  mytags="--tags"
+  gf $@
+  unset mytags
 }
 
 function gfr() {                             # check subdirs
