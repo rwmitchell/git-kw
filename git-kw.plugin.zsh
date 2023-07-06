@@ -101,10 +101,10 @@ function gsr() {
   for g in */.git
   do
     d=$( dirname $g )
-    printf "%s\n" "$d"
+    printf "\n%s\n" "$d"
     cd $d
     git status -s
-    cd -
+    cd - > /dev/null
   done
 }
 
