@@ -146,25 +146,35 @@ function gp() {
   local th
   for h in $gr; do
     cline 4
-    printf "Remote: %s\n" "$h"
+    local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
+    printf "Remote: %s on %s\n" "$h" "$hst"
     local rid=$( git rev-parse $h/$branch )
-    if [[ $lid != $rid ]]; then
-      local cnt=$( git diff --name-only $h/$branch...HEAD | wc -l )
-      if [[ $cnt > 0 ]]; then
-        printf "Updating %d files on %s\n" "$cnt" "$h"
-        ssay "Updating $cnt files on $h!"
-        # Checking OLD/NEW here shows if there is an actual transfer
-#       OLD_COMMIT=$( git rev-parse $h/$branch )
-        git push $mytags $h HEAD
-        th=$h
-#       NEW_COMMIT=$( git rev-parse $h/$branch )
-        [[ $? == 0 ]] && ((rc+=1))
-      else
-        ssay "$h is current"
-      fi
+
+    ssh_ping -t 2 $hst # >2 /dev/null
+    if [[ $hst > "" && $? != 0 ]]; then
+      printf "Unable to ping %s\n" $hst
     else
-      ssay "$h matches local"
-    fi
+
+      if [[ $lid != $rid ]]; then
+        local cnt=$( git diff --name-only $h/$branch...HEAD | wc -l )
+        if [[ $cnt > 0 ]]; then
+          printf "Updating %d files on %s\n" "$cnt" "$h"
+          ssay "Updating $cnt files on $h!"
+          # Checking OLD/NEW here shows if there is an actual transfer
+  #       OLD_COMMIT=$( git rev-parse $h/$branch )
+          git push $mytags $h HEAD
+          th=$h
+  #       NEW_COMMIT=$( git rev-parse $h/$branch )
+          [[ $? == 0 ]] && ((rc+=1))
+        else
+          ssay "$h is current"
+        fi
+      else
+        ssay "$h matches local"
+      fi
+
+    fi     # HST is pingable
+
   done
 
   [[ $rc == 1 ]] && ssay "Pushed files to $th"
@@ -204,26 +214,35 @@ function gpl() {
   local ts
   for h in $gr; do
     cline 4
-    printf "Remote: %s\n" "$h"
-    local rid=($( git ls-remote $h HEAD ))
-    rid=$rid[1]
-    if [[ $lid != $rid ]]; then
-      printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
-      printf "\n"
-      git diff --name-only HEAD..$h/$branch
-      printf "\n"
-      ts=$( git log --decorate=short --color HEAD...$h/$branch )
-      if [[ $md5 != $( echo $ts | md5 ) ]]; then
-        md5=$( echo $ts | md5 )
-        echo $ts
+    local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
+    printf "Remote: %s on %s\n" "$h" "$hst"
+
+    ssh_ping -t 2 $hst # >2 /dev/null
+    if [[ $hst > "" && $? != 0 ]]; then
+      printf "Unable to ping %s\n" $hst
+    else
+
+      local rid=($( git ls-remote $h HEAD ))
+      rid=$rid[1]
+      if [[ $lid != $rid ]]; then
+        printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
+        printf "\n"
+        git diff --name-only HEAD..$h/$branch
+        printf "\n"
+        ts=$( git log --decorate=short --color HEAD...$h/$branch )
+        if [[ $md5 != $( echo $ts | md5 ) ]]; then
+          md5=$( echo $ts | md5 )
+          echo $ts
+        fi
+  #     git log HEAD...FETCH_HEAD
+        printf "\n"
+        [[ $silent < 2 ]] && ssay "$root not in sync with $h"
+        ((rc+=1))
+  #   else
+  #     [[ $silent < 1 ]] && ssay "$h matches $root"
       fi
-#     git log HEAD...FETCH_HEAD
-      printf "\n"
-      [[ $silent < 2 ]] && ssay "$root not in sync with $h"
-      ((rc+=1))
-#   else
-#     [[ $silent < 1 ]] && ssay "$h matches $root"
-    fi
+
+    fi     # HST is pingable
   done
 
   return $rc
@@ -254,22 +273,31 @@ function gcr() {
   local lid=$( git rev-parse HEAD );
   for h in $gr; do
     cline 4
-    printf "Remote: %s\n" "$h"
-    local rid=($( git ls-remote $h HEAD ))
-    rid=$rid[1]
-    if [[ $lid != $rid ]]; then
-      printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
-      printf "\n"
-      git diff --name-only HEAD..$h/$branch
-      printf "\n"
-#     git log HEAD...$h/$branch
-      git log HEAD...FETCH_HEAD
-      printf "\n"
-      [[ $silent < 2 ]] && ssay "$root not in sync with $h"
-      ((rc+=1))
+    local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
+    printf "Remote: %s on %s\n" "$h" "$hst"
+
+    ssh_ping -t 2 $hst # >2 /dev/null
+    if [[ $hst > "" && $? != 0 ]]; then
+      printf "Unable to ping %s\n" $hst
     else
-      [[ $silent < 1 ]] && ssay "$h matches $root"
-    fi
+
+      local rid=($( git ls-remote $h HEAD ))
+      rid=$rid[1]
+      if [[ $lid != $rid ]]; then
+        printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
+        printf "\n"
+        git diff --name-only HEAD..$h/$branch
+        printf "\n"
+  #     git log HEAD...$h/$branch
+        git log HEAD...FETCH_HEAD
+        printf "\n"
+        [[ $silent < 2 ]] && ssay "$root not in sync with $h"
+        ((rc+=1))
+      else
+        [[ $silent < 1 ]] && ssay "$h matches $root"
+      fi
+
+    fi     # HST is pingable
   done
 
   return $rc
@@ -314,37 +342,46 @@ function gfa() {
 
   for h in $gr; do
     cline 4
-    printf "Remote: %s\n" "$h"
+    local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
+    printf "Remote: %s on %s\n" "$h" "$hst"
     pth=$( git remote get-url $h )
     if [[ $pth == ssh* || -e $pth ]]; then
-      local rid=($( git ls-remote $h $branch ))   # HEAD ))
-      rid=$rid[1]
-      if [[ $lid != $rid ]]; then
-        OLD_COMMIT=$( git rev-parse $h/$branch )
-        git fetch $h $branch  # HEAD
-        NEW_COMMIT=$( git rev-parse FETCH_HEAD )
-        printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
-        git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
-        printf "\n"
-#       git log HEAD...FETCH_HEAD
-        # determine which log approach is better
-        printf "git log %s/%s...FETCH_HEAD\n" "$h" "$branch"
-        git log $h/$branch...FETCH_HEAD
-        printf "\ngit lg HEAD...FETCH_HEAD\n"
-        git lg HEAD..FETCH_HEAD
-        printf "\n"
-        local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
-        printf "%d files from %s\n" "$cnt" "$h"
-        ssay "Got $cnt files from $h for $rdir!"
-        # Checking OLD/NEW here shows if there is an actual transfer
-        ((rc+=1))
+
+      ssh_ping -t 2 $hst # >2 /dev/null
+      if [[ $hst > "" && $? != 0 ]]; then
+        printf "Unable to ping %s\n" $hst
       else
-        printf "%s matches %s\n" "$h" "$branch"
-      [[ $silent < 1 ]] && ssay "$h matches local"
-      fi
+
+        local rid=($( git ls-remote $h $branch ))   # HEAD ))
+        rid=$rid[1]
+        if [[ $lid != $rid ]]; then
+          OLD_COMMIT=$( git rev-parse $h/$branch )
+          git fetch $h $branch  # HEAD
+          NEW_COMMIT=$( git rev-parse FETCH_HEAD )
+          printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
+          git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
+          printf "\n"
+  #       git log HEAD...FETCH_HEAD
+          # determine which log approach is better
+          printf "git log %s/%s...FETCH_HEAD\n" "$h" "$branch"
+          git log $h/$branch...FETCH_HEAD
+          printf "\ngit lg HEAD...FETCH_HEAD\n"
+          git lg HEAD..FETCH_HEAD
+          printf "\n"
+          local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
+          printf "%d files from %s\n" "$cnt" "$h"
+          ssay "Got $cnt files from $h for $rdir!"
+          # Checking OLD/NEW here shows if there is an actual transfer
+          ((rc+=1))
+        else
+          printf "%s matches %s\n" "$h" "$branch"
+        [[ $silent < 1 ]] && ssay "$h matches local"
+        fi
+      fi     # HST is pingable
     else
       printf "%s not available\n" $h
     fi
+
   done
 
   [[ $rc == 1 ]] && ssay "Fetched files from $h"
@@ -389,37 +426,46 @@ function gf() {
   done
 
   cline 4
-  printf "Remote: %s\n" "$repo"
+  local hst=$( git remote get-url $repo | awk -F'[/:]' '{ print $4 }' )
+  printf "Remote: %s on %s\n" "$repo" "$hst"
   pth=$( git remote get-url $repo )
   if [[ $pth == ssh* || -e $pth ]]; then
-    local rid=($( git ls-remote $repo $branch ))   # HEAD ))
-    rid=$rid[1]
-    if [[ $lid != $rid ]]; then
-      OLD_COMMIT=$( git rev-parse $repo/$branch )
-      git fetch $mytags $repo $branch  # HEAD
-      NEW_COMMIT=$( git rev-parse FETCH_HEAD )
-      printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$repo"
-      git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
-      printf "\n"
-#     git log HEAD...FETCH_HEAD
-      # determine which log approach is better
-      printf "git log %s/%s...FETCH_HEAD\n" "$repo" "$branch"
-      git log $repo/$branch...FETCH_HEAD
-      printf "\ngit lg HEAD...FETCH_HEAD\n"
-      git lg HEAD..FETCH_HEAD
-      printf "\n"
-      local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
-      printf "%d files from %s\n" "$cnt" "$repo"
-      ssay "Got $cnt files from $repo for $rdir!"
-      # Checking OLD/NEW here shows if there is an actual transfer
-      ((rc+=1))
+
+    ssh_ping -t 2 $hst # >2 /dev/null
+    if [[ $hst > "" && $? != 0 ]]; then
+      printf "Unable to ping %s\n" $hst
     else
-      printf "%s matches %s\n" "$repo" "$branch"
-    [[ $silent < 1 ]] && ssay "$repo matches local"
-    fi
+
+      local rid=($( git ls-remote $repo $branch ))   # HEAD ))
+      rid=$rid[1]
+      if [[ $lid != $rid ]]; then
+        OLD_COMMIT=$( git rev-parse $repo/$branch )
+        git fetch $mytags $repo $branch  # HEAD
+        NEW_COMMIT=$( git rev-parse FETCH_HEAD )
+        printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$repo"
+        git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
+        printf "\n"
+  #     git log HEAD...FETCH_HEAD
+        # determine which log approach is better
+        printf "git log %s/%s...FETCH_HEAD\n" "$repo" "$branch"
+        git log $repo/$branch...FETCH_HEAD
+        printf "\ngit lg HEAD...FETCH_HEAD\n"
+        git lg HEAD..FETCH_HEAD
+        printf "\n"
+        local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
+        printf "%d files from %s\n" "$cnt" "$repo"
+        ssay "Got $cnt files from $repo for $rdir!"
+        # Checking OLD/NEW here shows if there is an actual transfer
+        ((rc+=1))
+      else
+        printf "%s matches %s\n" "$repo" "$branch"
+      [[ $silent < 1 ]] && ssay "$repo matches local"
+      fi
+    fi     # HST is pingable
   else
     printf "%s not available\n" $repo
   fi
+
 
   [[ $rc == 1 ]] && ssay "Fetched files from $repo"
   [[ $rc  > 1 ]] && ssay "Fetched files from $rc hosts"
@@ -583,14 +629,23 @@ function gps() {         # git push status - show files to be pushed
   local lid=$( git rev-parse HEAD );
   for h in $gr; do
     cline 4
-    printf "Remote: %s/%s\n" "$h/$branch"
-    local rid=$( git diff --color --stat --cached $h/$branch )
-    if [[ $rid ]]; then
-      ((rc+=1))
-      echo $rid
+    local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
+    printf "Remote: %s/%s on %s\n" "$h/$branch" "$hst"
+
+    ssh_ping -t 2 $hst # >2 /dev/null
+    if [[ $hst > "" && $? != 0 ]]; then
+      printf "Unable to ping %s\n" $hst
     else
-      [[ $silent < 1 ]] && ssay "$h is current"
-    fi
+
+      local rid=$( git diff --color --stat --cached $h/$branch )
+      if [[ $rid ]]; then
+        ((rc+=1))
+        echo $rid
+      else
+        [[ $silent < 1 ]] && ssay "$h is current"
+      fi
+
+    fi     # HST is pingable
   done
 
   [[ $silent < 2 && $rc  > 0 ]] && ssay "Need to update $rc repos"
