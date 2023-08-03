@@ -146,12 +146,13 @@ function gp() {
   local th
   for h in $gr; do
     cline 4
+    local sch=$( git remote get-url $h | awk -F'[/:]' '{ print $1 }' )
     local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
-    printf "Remote: %s on %s\n" "$h" "$hst"
+    printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst"
     local rid=$( git rev-parse $h/$branch )
 
-    ssh_ping -t 2 $hst # >2 /dev/null
-    if [[ $hst > "" && $? != 0 ]]; then
+    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+    if [[ $sch > "" && $? != 0 ]]; then
       printf "Unable to ping %s\n" $hst
     else
 
@@ -214,11 +215,12 @@ function gpl() {
   local ts
   for h in $gr; do
     cline 4
+    local sch=$( git remote get-url $h | awk -F'[/:]' '{ print $1 }' )
     local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
-    printf "Remote: %s on %s\n" "$h" "$hst"
+    printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst"
 
-    ssh_ping -t 2 $hst # >2 /dev/null
-    if [[ $hst > "" && $? != 0 ]]; then
+    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+    if [[ $sch > "" && $? != 0 ]]; then
       printf "Unable to ping %s\n" $hst
     else
 
@@ -273,11 +275,12 @@ function gcr() {
   local lid=$( git rev-parse HEAD );
   for h in $gr; do
     cline 4
+    local sch=$( git remote get-url $h | awk -F'[/:]' '{ print $1 }' )
     local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
-    printf "Remote: %s on %s\n" "$h" "$hst"
+    printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst"
 
-    ssh_ping -t 2 $hst # >2 /dev/null
-    if [[ $hst > "" && $? != 0 ]]; then
+    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+    if [[ $sch > "" && $? != 0 ]]; then
       printf "Unable to ping %s\n" $hst
     else
 
@@ -342,13 +345,14 @@ function gfa() {
 
   for h in $gr; do
     cline 4
+    local sch=$( git remote get-url $h | awk -F'[/:]' '{ print $1 }' )
     local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
-    printf "Remote: %s on %s\n" "$h" "$hst"
+    printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst"
     pth=$( git remote get-url $h )
     if [[ $pth == ssh* || -e $pth ]]; then
 
-      ssh_ping -t 2 $hst # >2 /dev/null
-      if [[ $hst > "" && $? != 0 ]]; then
+      [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+      if [[ $sch > "" && $? != 0 ]]; then
         printf "Unable to ping %s\n" $hst
       else
 
@@ -426,13 +430,14 @@ function gf() {
   done
 
   cline 4
+  local sch=$( git remote get-url $repo | awk -F'[/:]' '{ print $1 }' )
   local hst=$( git remote get-url $repo | awk -F'[/:]' '{ print $4 }' )
-  printf "Remote: %s on %s\n" "$repo" "$hst"
+  printf "Remote: %s using %s on %s\n" "$repo" "$sch" "$hst"
   pth=$( git remote get-url $repo )
   if [[ $pth == ssh* || -e $pth ]]; then
 
-    ssh_ping -t 2 $hst # >2 /dev/null
-    if [[ $hst > "" && $? != 0 ]]; then
+    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+    if [[ $sch > "" && $? != 0 ]]; then
       printf "Unable to ping %s\n" $hst
     else
 
@@ -630,10 +635,11 @@ function gps() {         # git push status - show files to be pushed
   for h in $gr; do
     cline 4
     local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
-    printf "Remote: %s/%s on %s\n" "$h/$branch" "$hst"
+    local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
+    printf "Remote: %s using %s on %s\n" "$h/$branch" "$sch" "$hst"
 
-    ssh_ping -t 2 $hst # >2 /dev/null
-    if [[ $hst > "" && $? != 0 ]]; then
+    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+    if [[ $sch > "" && $? != 0 ]]; then
       printf "Unable to ping %s\n" $hst
     else
 
