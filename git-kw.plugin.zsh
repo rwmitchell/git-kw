@@ -40,8 +40,8 @@ alias --  glgf="is_git && git log --graph --abbrev-commit --decorate \
 
 function gltag() {
   git log --decorate --oneline --pretty=format:"%h %d %s" | \
-  awk '{ if ($2 ~ /\(tag:.*/) {gsub(/[()]/, "", $2); printf "(%s  ", $3 } else { printf "\t" } print }' | \
-  sed 's/ tag:.*)/ /'
+    awk '{ if ($2 ~ /\(tag:.*/) {gsub(/[()]/, "", $2); printf "(%-7s  ", $3 } else { printf ("%-10s","") } print }' | \
+  sed 's/ tag:.*)/ /' | expand -t8
 }
 # to use to get commit date for applying to tags
 alias --   glgdt="git log --all --abbrev-commit --decorate \
@@ -52,6 +52,16 @@ function commit_date() {
   glgdt | grep "$1" | awk -F'|' '{printf "%s\n", $2; }'
 }
 
+function git_tag() {
+  [[ $1 == "" ]] && printf "Need Hash    number\n"  && return
+  [[ $2 == "" ]] && printf "Need Version number\n"  && return
+  [[ $3 == "" ]] && printf "Need Commit  message\n" && return
+
+  glog $1 -1
+  rsp=$(prompt -p "is this correct ?:" "yYnNq")
+  [[ $rsp == 'Y' || $rsp == 'y' ]] && \
+    GIT_COMMITTER_DATE="$( commit_date $1 )" git tag -a $2 $1 -m \""$3"\"
+}
 
 alias --   gb="is_git && git branch"
 alias --  gba="is_git && git branch --all"
