@@ -66,7 +66,7 @@ function git_tag() {
 alias --   gb="is_git && git branch"
 alias --  gba="is_git && git branch --all"
 
-alias --   gd="is_git && git diff --ignore-space-change"
+# alias --   gd="is_git && git diff --ignore-space-change"
 alias -- gdca="is_git && git diff --cached"
 alias --  gds="is_git && git diff --staged"
 alias --  gdw="is_git && git diff --word-diff"
@@ -682,8 +682,8 @@ function gpsr() {
 
 # OMZ git plugin uses gsw and gswc
 # this matches using gmb() to merge branch
-alias gsb='git switch'             //            switch to branch
-alias gsbc='git switch -c'         // create and switch to branch
+alias gsb='git switch'             #             switch to branch
+alias gsbc='git switch -c'         #  create and switch to branch
 
 function grename() {
   git status > /dev/null  # only get result code or show error
@@ -744,3 +744,15 @@ function gcat() {
 
 }
 compdef _git gcat=git-show
+
+function gd() {     # Show git diff with line breaks between files
+
+  is_git || return
+
+  for file in $( git ls-files --modified )
+  do
+    git diff --ignore-space-change $file
+    lbline 2
+  done
+
+}
