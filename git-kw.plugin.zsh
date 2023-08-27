@@ -579,7 +579,7 @@ function gmb() {                              # git merge branch
   git status > /dev/null  # only get result code or show error
   [[ $? == 0 ]] || return 0
 
-  [[ $# -lt 1 || $1 == "-h" ]] \
+  [[ $# -lt 1 || $@[(I)-h] -gt 0 ]] \
     && printf "$0 branch_name\n" \
     && printf "\tMerge named branch\n" \
     && git branch --list \
@@ -704,7 +704,7 @@ function grename() {
 
 # https://queirozf.com/entries/git-examples-searching-the-git-history#list-commits-including-string-in-content
 function ggrep() {
-  [[ $# == 0 || $1 == "-h" ]] \
+  [[ $# == 0 || $@[(I)-h] -gt 0 ]] \
     && printf "$0 STRING FILE(s)\n" \
     && printf "\tShow log for commit with STRING\n" \
     && return
@@ -714,7 +714,7 @@ function ggrep() {
   git log --name-status -S"$PAT" $@
 }
 function ggreprgx() {
-  [[ $# == 0 || $1 == "-h" ]] \
+  [[ $# == 0 || $@[(I)-h] -gt 0 ]] \
     && printf "$0 REGEX FILE(s)\n" \
     && printf "\tShow log for commit with REGEX\n" \
     && return
@@ -724,7 +724,7 @@ function ggreprgx() {
   git log --name-status -G"$PAT" $@
 }
 function ggrepd() {
-  [[ $# == 0 || $1 == "-h" ]] \
+  [[ $# == 0 || $@[(I)-h] -gt 0 ]] \
     && printf "$0 REGEX FILE(s)\n" \
     && printf "\tShow diffs for commit with REGEX\n" \
     && return
@@ -734,8 +734,13 @@ function ggrepd() {
   git log --patch -G"$PAT" $@
 }
 
+# demo/test -h being in any position on cmdline
+functio help_test() {
+  printf "Cnt: %d\n" $#
+  printf "Match: %s\n" $@[(I)-h]
+}
 function gcat() {
-  [[ $# < 2 || $1 == "-h" ]] \
+  [[ $# < 2 || $@[(I)-h] -gt 0 ]] \
     && printf "$0 COMMITID FILE\n" \
     && printf "\tShow file as of COMMITID\n" \
     && return
