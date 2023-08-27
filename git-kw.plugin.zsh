@@ -764,6 +764,6 @@ function gla() {     # Show last git log for each file
   do
     glog -1 $file
     lbline 2
-  done | less
+  done | mdless
 
 }
