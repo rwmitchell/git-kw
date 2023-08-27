@@ -756,3 +756,14 @@ function gd() {     # Show git diff with line breaks between files
   done
 
 }
+function gla() {     # Show last git log for each file
+
+  is_git || return
+
+  for file in $( git ls-files $@ )
+  do
+    glog -1 $file
+    lbline 2
+  done | less
+
+}
