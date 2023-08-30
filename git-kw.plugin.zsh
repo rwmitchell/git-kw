@@ -215,6 +215,12 @@ function gpl() {
     esac
   done
 
+  # show commits to be pushed without connecting to each repo
+  cline 2
+  git glog HEAD...ORIG_HEAD    # to-be-pushed log
+  cline 2
+
+  # connect to each repo and show repo specific log
   local root=$(basename $( git rev-parse --show-toplevel ) )
   local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local rc=0
