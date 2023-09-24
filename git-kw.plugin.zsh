@@ -39,7 +39,7 @@ alias --  glgf="is_git && git log --graph --abbrev-commit --decorate \
                                   --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold yellow)%d%C(reset)%n'"
 
 function gltag() {
-  git log --decorate --oneline --pretty=format:"%h %d %s" | \
+  git log --decorate --oneline --pretty=format:"%h %d %s" $@ | \
     awk '{ if ($2 ~ /\(tag:.*/) {gsub(/[()]/, "", $2); printf "(%-7s  ", $3 } else { printf ("%-10s","") } print }' | \
   sed 's/ tag:.*)/ /' | expand -t8
 }
@@ -760,7 +760,7 @@ function gd() {     # Show git diff with line breaks between files
 
   is_git || return
 
-  for file in $( git ls-files --modified )
+  for file in $( git ls-files --modified $@ )
   do
     git diff --ignore-space-change $file
     lbline 2
