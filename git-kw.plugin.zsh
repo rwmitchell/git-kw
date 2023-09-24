@@ -217,7 +217,7 @@ function gpl() {
 
   # show commits to be pushed without connecting to each repo
   cline 2
-  git glog HEAD...ORIG_HEAD    # to-be-pushed log
+  git glog HEAD...origin/HEAD     # ORIG_HEAD    # to-be-pushed log
   cline 2
 
   # connect to each repo and show repo specific log
