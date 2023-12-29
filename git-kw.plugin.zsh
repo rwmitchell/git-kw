@@ -9,7 +9,9 @@ alias --    gs="is_git && git status"
 alias --   gdo="is_git && git difftool"      # uses opendiff
 alias --  gdoy="is_git && git difftool -y"   # uses opendiff, no prompting
 alias --  glog="is_git && git glog"
+alias -- glogg="is_git && git glog -G"       # grep log entries for string
 alias -- glogp="is_git && git glogp"         # show patches
+alias -- glogw="is_git && git glog --since '1 week'"  # show past week commits
 
 # works great when there are commits to be pushed
 # else it shows the entire log
@@ -25,26 +27,26 @@ alias --  gau="is_git && git add --update"
 # 2023-05-25: remove --all from log output
 # without --all, log output starts with current HEAD
 
-alias --   glg="is_git && git log --graph --abbrev-commit --decorate \
+alias --   glg="is_git && git log --graph --abbrev-commit --decorate --follow \
                                   --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold yellow)%d%C(reset)'"
 
-alias --  glgb="is_git && git log --graph --simplify-by-decoration \
+alias --  glgb="is_git && git log --graph --simplify-by-decoration --follow \
                                   --pretty='format:%C(green)%as %C(auto)%d - %s'"
 
-alias -- glgba="is_git && git log --graph --simplify-by-decoration \
+alias -- glgba="is_git && git log --graph --simplify-by-decoration --follow \
                                   --pretty='format:%C(cyan)%h %C(green)%as %C(yellow)%al%C(auto)%d - %s'"
 
-alias --  glgf="is_git && git log --graph --abbrev-commit --decorate \
+alias --  glgf="is_git && git log --graph --abbrev-commit --decorate --follow \
                                   --name-status \
                                   --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold yellow)%d%C(reset)%n'"
 
 function gltag() {
-  git log --decorate --oneline --pretty=format:"%h %d %s" $@ | \
+  git log --decorate --oneline --follow --pretty=format:"%h %d %s" $@ | \
     awk '{ if ($2 ~ /\(tag:.*/) {gsub(/[()]/, "", $2); printf "(%-7s  ", $3 } else { printf ("%-10s","") } print }' | \
   sed 's/ tag:.*)/ /' | expand -t8
 }
 # to use to get commit date for applying to tags
-alias --   glgdt="git log --all --abbrev-commit --decorate \
+alias --   glgdt="git log --all --abbrev-commit --decorate --follow \
                                   --format=format:'%h|%ai|%s|%d'"
 
 function commit_date() {
@@ -717,7 +719,7 @@ function ggrep() {
 
   local PAT=$1; shift;
 
-  git log --name-status -S"$PAT" $@
+  git log --follow --name-status -S"$PAT" $@
 }
 function ggreprgx() {
   [[ $# == 0 || $@[(I)-h] -gt 0 ]] \
@@ -727,7 +729,7 @@ function ggreprgx() {
 
   local PAT=$1; shift;
 
-  git log --name-status -G"$PAT" $@
+  git log --follow --name-status -G"$PAT" $@
 }
 function ggrepd() {
   [[ $# == 0 || $@[(I)-h] -gt 0 ]] \
@@ -737,7 +739,7 @@ function ggrepd() {
 
   local PAT=$1; shift;
 
-  git log --patch -G"$PAT" $@
+  git log --follow --patch -G"$PAT" $@
 }
 
 # demo/test -h being in any position on cmdline
@@ -763,6 +765,17 @@ function gd() {     # Show git diff with line breaks between files
   for file in $( git ls-files --modified $@ )
   do
     git diff --ignore-space-change $file
+    lbline 2
+  done
+
+}
+function gdwd() {     # Show git diff using dwdiff
+
+  is_git || return
+
+  for file in $( git ls-files --modified $@ )
+  do
+    ( printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" $file; git difftool -y --tool=dwdiff $file ) | less
     lbline 2
   done
 
