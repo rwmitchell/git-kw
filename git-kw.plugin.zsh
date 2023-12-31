@@ -27,26 +27,28 @@ alias --  gau="is_git && git add --update"
 # 2023-05-25: remove --all from log output
 # without --all, log output starts with current HEAD
 
-alias --   glg="is_git && git log --graph --abbrev-commit --decorate --follow \
+# NOTE: --follow ONLY works for a single file, will generate an error on an entire repo
+alias --   glg="is_git && git log --graph --abbrev-commit --decorate \
                                   --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold yellow)%d%C(reset)'"
 
-alias --  glgb="is_git && git log --graph --simplify-by-decoration --follow \
+# Show only tags or branches
+alias --  glgb="is_git && git log --graph --simplify-by-decoration \
                                   --pretty='format:%C(green)%as %C(auto)%d - %s'"
 
-alias -- glgba="is_git && git log --graph --simplify-by-decoration --follow \
+alias -- glgba="is_git && git log --graph --simplify-by-decoration \
                                   --pretty='format:%C(cyan)%h %C(green)%as %C(yellow)%al%C(auto)%d - %s'"
 
-alias --  glgf="is_git && git log --graph --abbrev-commit --decorate --follow \
+alias --  glgf="is_git && git log --graph --abbrev-commit --decorate \
                                   --name-status \
                                   --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold yellow)%d%C(reset)%n'"
 
 function gltag() {
-  git log --decorate --oneline --follow --pretty=format:"%h %d %s" $@ | \
+  git log --decorate --oneline --pretty=format:"%h %d %s" $@ | \
     awk '{ if ($2 ~ /\(tag:.*/) {gsub(/[()]/, "", $2); printf "(%-7s  ", $3 } else { printf ("%-10s","") } print }' | \
   sed 's/ tag:.*)/ /' | expand -t8
 }
 # to use to get commit date for applying to tags
-alias --   glgdt="git log --all --abbrev-commit --decorate --follow \
+alias --   glgdt="git log --all --abbrev-commit --decorate \
                                   --format=format:'%h|%ai|%s|%d'"
 
 function commit_date() {
@@ -718,8 +720,10 @@ function ggrep() {
     && return
 
   local PAT=$1; shift;
+  local FLW=""
+  [[ $# -eq 1 ]] && FLW="--follow"
 
-  git log --follow --name-status -S"$PAT" $@
+  git log $FLW --name-status -S"$PAT" $@
 }
 function ggreprgx() {
   [[ $# == 0 || $@[(I)-h] -gt 0 ]] \
@@ -728,8 +732,10 @@ function ggreprgx() {
     && return
 
   local PAT=$1; shift;
+  local FLW=""
+  [[ $# -eq 1 ]] && FLW="--follow"
 
-  git log --follow --name-status -G"$PAT" $@
+  git log $FLW --name-status -G"$PAT" $@
 }
 function ggrepd() {
   [[ $# == 0 || $@[(I)-h] -gt 0 ]] \
@@ -738,8 +744,10 @@ function ggrepd() {
     && return
 
   local PAT=$1; shift;
+  local FLW=""
+  [[ $# -eq 1 ]] && FLW="--follow"
 
-  git log --follow --patch -G"$PAT" $@
+  git log $FLW --patch -G"$PAT" $@
 }
 
 # demo/test -h being in any position on cmdline
