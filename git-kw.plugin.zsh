@@ -783,9 +783,9 @@ function gdwd() {     # Show git diff using dwdiff
 
   for file in $( git ls-files --modified $@ )
   do
-    ( printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" $file; git difftool -y --tool=dwdiff $file ) | less
+    ( printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" $file; git difftool -y --tool=dwdiff $file ) # | $PAGER
     lbline 2
-  done
+  done # | mdless     # mdless parses comments, ie '#',  as header lines
 
 }
 function gla() {     # Show last git log for each file
@@ -796,6 +796,6 @@ function gla() {     # Show last git log for each file
   do
     glog -1 $file
     lbline 2
-  done | mdless
+  done | mdless                    # mdless allows inline images
 
 }
