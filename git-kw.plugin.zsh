@@ -145,8 +145,8 @@ function gc() {
   [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
   return $rc
 }
+# compdefs not getting auto loaded (will if file is sourced), see .zshrc-complete
 compdef _git gc=git-commit
-
 function gp() {
   git status > /dev/null  # only get result code or show error
   [[ $? == 0 ]] || return 0
@@ -526,7 +526,7 @@ function gdr() {                             # check subdirs
     yline
   done
 }
-compdef _git gdr=git-commit
+compdef _git gdr=git-diff
 
 function gir() {                             # check incoming dry-run
   setopt localoptions noautopushd nopushdignoredups
@@ -793,7 +793,7 @@ function gdwd() {     # Show git diff using dwdiff
   done # | mdless     # mdless parses comments, ie '#',  as header lines
 
 }
-compdef _git gdwd=git-commit
+compdef _git gdwd=git-diff
 function gla() {     # Show last git log for each file
 
   is_git || return
@@ -805,3 +805,4 @@ function gla() {     # Show last git log for each file
   done | mdless                    # mdless allows inline images
 
 }
+compdef _git gla=git-log
