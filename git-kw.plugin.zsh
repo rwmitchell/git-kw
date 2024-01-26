@@ -526,6 +526,7 @@ function gdr() {                             # check subdirs
     yline
   done
 }
+compdef _git gdr=git-commit
 
 function gir() {                             # check incoming dry-run
   setopt localoptions noautopushd nopushdignoredups
@@ -749,6 +750,9 @@ function ggrepd() {
 
   git log $FLW --patch -G"$PAT" $@
 }
+compdef _git ggrep=git-log
+compdef _git ggreprgx=git-log
+compdef _git ggrepd=git-log
 
 # demo/test -h being in any position on cmdline
 functio help_test() {
@@ -777,6 +781,7 @@ function gd() {     # Show git diff with line breaks between files
   done
 
 }
+compdef _git gd=git-commit
 function gdwd() {     # Show git diff using dwdiff
 
   is_git || return
@@ -788,6 +793,7 @@ function gdwd() {     # Show git diff using dwdiff
   done # | mdless     # mdless parses comments, ie '#',  as header lines
 
 }
+compdef _git gdwd=git-commit
 function gla() {     # Show last git log for each file
 
   is_git || return
