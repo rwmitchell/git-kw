@@ -145,8 +145,8 @@ function gc() {
   [[ $rc -eq 0 && -x $cmd ]] && ( printf "%s\n" "$root"; $cmd; return 0 )
   return $rc
 }
+# compdefs not getting auto loaded (will if file is sourced), see .zshrc-complete
 compdef _git gc=git-commit
-
 function gp() {
   git status > /dev/null  # only get result code or show error
   [[ $? == 0 ]] || return 0
@@ -221,7 +221,7 @@ function gpl() {
 
   # show commits to be pushed without connecting to each repo
   cline 2
-  git glog HEAD...origin/HEAD     # ORIG_HEAD    # to-be-pushed log
+  git glog HEAD...ORIG_HEAD     # origin/HEAD    # to-be-pushed log
   cline 2
 
   # connect to each repo and show repo specific log
@@ -526,6 +526,7 @@ function gdr() {                             # check subdirs
     yline
   done
 }
+compdef _git gdr=git-diff
 
 function gir() {                             # check incoming dry-run
   setopt localoptions noautopushd nopushdignoredups
@@ -749,6 +750,9 @@ function ggrepd() {
 
   git log $FLW --patch -G"$PAT" $@
 }
+compdef _git ggrep=git-log
+compdef _git ggreprgx=git-log
+compdef _git ggrepd=git-log
 
 # demo/test -h being in any position on cmdline
 functio help_test() {
@@ -777,6 +781,7 @@ function gd() {     # Show git diff with line breaks between files
   done
 
 }
+compdef _git gd=git-commit
 function gdwd() {     # Show git diff using dwdiff
 
   is_git || return
@@ -788,6 +793,7 @@ function gdwd() {     # Show git diff using dwdiff
   done # | mdless     # mdless parses comments, ie '#',  as header lines
 
 }
+compdef _git gdwd=git-diff
 function gla() {     # Show last git log for each file
 
   is_git || return
@@ -799,3 +805,4 @@ function gla() {     # Show last git log for each file
   done | mdless                    # mdless allows inline images
 
 }
+compdef _git gla=git-log
