@@ -45,7 +45,7 @@ alias --  glgf="is_git && git log --graph --abbrev-commit --decorate \
 function gltag() {
   git log --decorate --oneline --pretty=format:"%h %d %s" $@ | \
     awk '{ if ($2 ~ /\(tag:.*/) {gsub(/[()]/, "", $2); printf "(%-7s  ", $3 } else { printf ("%-10s","") } print }' | \
-  sed 's/ tag:.*)/ /' | expand -t8
+  sed 's/ tag:.*)/ /' | expand -t8 | $PAGER
 }
 # to use to get commit date for applying to tags
 alias --   glgdt="git log --all --abbrev-commit --decorate \
