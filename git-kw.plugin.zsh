@@ -788,7 +788,8 @@ function gdwd() {     # Show git diff using dwdiff
 
   for file in $( git ls-files --modified $@ )
   do
-    ( printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" $file; git difftool -y --tool=dwdiff $file ) # | $PAGER
+#   ( printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" $file; git difftool -y --tool=dwdiff $file ) # | $PAGER
+    ( printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" $file; git diff $file | dwdiff -u) # | $PAGER
     lbline 2
   done # | mdless     # mdless parses comments, ie '#',  as header lines
 
