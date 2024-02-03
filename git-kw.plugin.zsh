@@ -62,7 +62,7 @@ function git_tag() {
   [[ $3 == "" ]] && printf "Need Commit  message\n" && return
 
   glog $1 -1
-  rsp=$(prompt -p "is this correct ?:" "yY" "nNq")
+  rsp=$(prompt -e "is this correct ?:" "yY" "nNq")
   [[ *$rsp* == "Yy" ]] && \
     GIT_COMMITTER_DATE="$( commit_date $1 )" git tag -a $2 $1 -m \""$3"\"
 }
@@ -97,7 +97,7 @@ function guk() {
   do
 
     if [[ $rsp != "Y" ]]; then
-      rsp=$(prompt -p "delete ?: $file" "yY" "nN" "aq")
+      rsp=$(prompt -e "delete ?: $file" "yY" "nN" "aq")
     fi
 
     case "$rsp" in
