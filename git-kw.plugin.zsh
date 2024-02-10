@@ -223,7 +223,7 @@ function gpl() {
   cline 2
   # 2024-02-09 : origin/HEAD is correct!!
   # If the following gives an error, you need to:
-  # git origin set-head origin -a
+  # git remote set-head origin -a
   git glog HEAD...origin/HEAD    # ORIG_HEAD    # to-be-pushed log
   cline 2
 
