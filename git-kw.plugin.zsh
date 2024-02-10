@@ -221,7 +221,10 @@ function gpl() {
 
   # show commits to be pushed without connecting to each repo
   cline 2
-  git glog HEAD...ORIG_HEAD     # origin/HEAD    # to-be-pushed log
+  # 2024-02-09 : origin/HEAD is correct!!
+  # If the following gives an error, you need to:
+  # git origin set-head origin -a
+  git glog HEAD...origin/HEAD    # ORIG_HEAD    # to-be-pushed log
   cline 2
 
   # connect to each repo and show repo specific log
