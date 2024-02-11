@@ -14,3 +14,4 @@ _gf() {
   _arguments  :args:"( $(git remote show) )"
 }
 compdef _gf gf
+compdef _gf gp
