@@ -157,7 +157,14 @@ function gp() {
   echo $root
   local gr=($( git remote show ));
   local lid=$( git rev-parse HEAD );
+
   local th
+  [[ $# == 1 ]] && {
+    [[ ${gr[(ie)$1]} -le ${#gr} ]] && gr=($1) || {
+      printf "Invalid: %s\n" $1
+      return
+    }
+  }
   for h in $gr; do
     cline 4
     local sch=$( git remote get-url $h | awk -F'[/:]' '{ print $1 }' )
@@ -196,6 +203,8 @@ function gp() {
   [[ $rc  > 1 ]] && ssay "Pushed files to $rc of $#gr hosts"
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
+compdef _gf gp
+
 function gpt() {
   mytags="--follow-tags"
   gp $@
