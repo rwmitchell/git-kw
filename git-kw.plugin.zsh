@@ -446,9 +446,12 @@ function gf() {
       -h|--help  )
         printf "-s|--silent : (1) silence 'in sync' message\n"
         printf "-s|--silent : (2) silence 'not in sync' message\n"
+        printf "Repos: %s\n" "$gr"
         return;;
-      *) printf "Unexpected: %s\n" "$arg"
-        return;;
+      *) [[ ${gr[(ie)$arg]} -le ${#gr} ]] && repo=$arg || {
+        printf "Unexpected: %s\n" "$arg"
+        return
+      } ;;
     esac
   done
 
@@ -500,6 +503,7 @@ function gf() {
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 
 }
+
 function gft() {
   mytags="--tags"
   gf $@

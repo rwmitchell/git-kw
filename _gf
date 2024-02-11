@@ -1,0 +1,16 @@
+#compdef gf
+#autoload
+
+_gf() {
+
+# Below is a better way of doing this:
+# local -a list=( $(git remote show) )
+# git remote show | while read cmd; do
+#   list+=("$cmd")
+# done
+
+# Both work, _arguments only allows a single arg
+# _describe 'repos' "( $(git remote show) )"
+  _arguments  :args:"( $(git remote show) )"
+}
+compdef _gf gf
