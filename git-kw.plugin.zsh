@@ -159,11 +159,17 @@ function gp() {
   local lid=$( git rev-parse HEAD );
 
   local th
+<<<<<<< HEAD
   [[ $# == 1 ]] && {
     [[ ${gr[(ie)$1]} -le ${#gr} ]] && gr=($1) || {
       printf "Invalid: %s\n" $1
       return
     }
+=======
+  [[ $# == 1 ]] && [[ ${gr[(ie)$1]} -le ${#gr} ]] && gr=($1) || {
+    printf "Invald: %s\n" $1
+    return
+>>>>>>> de713f6a892cd805451eb3a6778c798eaaa992e2
   }
   for h in $gr; do
     cline 4
