@@ -49,7 +49,13 @@ function gltag() {
 }
 # to use to get commit date for applying to tags
 alias --   glgdt="git log --all --abbrev-commit --decorate \
-                                  --format=format:'%h|%ai|%s|%d'"
+  --format=format:'%C(auto)%h|%ai|%s|%d'"
+
+function gl2tag() {      # show short log back to last tag
+  # if defined as an alias, $(git describe) gets defined when sourcing this file
+  glgdt $(git describe --tags --abbrev=0)..HEAD
+}
+
 
 function commit_date() {
   [[ $1 == "" ]] && printf "Need Hash number\n" && return
@@ -62,9 +68,9 @@ function git_tag() {
   [[ $3 == "" ]] && printf "Need Commit  message\n" && return
 
   glog $1 -1
-  rsp=$(prompt -e "is this correct ?:" "yY" "nNq")
-  [[ *$rsp* == "Yy" ]] && \
-    GIT_COMMITTER_DATE="$( commit_date $1 )" git tag -a $2 $1 -m \""$3"\"
+  rsp=$(prompt -e "is this correct ?" "yY" "nNq")
+  [[ "Yy" == *$rsp* ]] && \
+    GIT_COMMITTER_DATE="$( commit_date $1 )" git tag -a $2 $1 -m "$3"  # add -f to force message change
 }
 
 alias --   gb="is_git && git branch"
@@ -97,7 +103,7 @@ function guk() {
   do
 
     if [[ $rsp != "Y" ]]; then
-      rsp=$(prompt -e "delete ?: $file" "yY" "nN" "aq")
+      rsp=$(prompt -e "Delete ? $file" "yY" "nN" "aq")
     fi
 
     case "$rsp" in
@@ -206,7 +212,7 @@ function gp() {
 compdef _gf gp
 
 function gpt() {
-  mytags="--follow-tags"
+  mytags="--tags --follow-tags"
   gp $@
   unset mytags
 }
