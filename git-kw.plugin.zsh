@@ -180,12 +180,16 @@ function gp() {
                   || printf "Local : %s using %s\n" "$h" "$url"
     local rid=$( git rev-parse $h/$branch )
 
-    [[ -n $sch ]] && ssh_ping -t 2 $hst # >2 /dev/null
-    if [[ $sch > "" && $? != 0 ]]; then
-      printf "Unable to ping %s\n" $hst
-    elif [[ ! -e $url ]]; then
-      printf "Not mounted: %s\n" $url
-    else
+    local err=0
+    [[ -n $sch ]] && {
+      ssh_ping -t 2 $hst;
+      err=$?          # >2 /dev/null
+      [[ $err -ne 0 ]] && printf "Unable to ping %s\n" $hst
+    } || {
+      [[ ! -e $url ]] && {  printf "Not mounted: %s\n" $url; err=1 }
+    }
+
+    if [[ $err -eq 0 ]]; then
 
       if [[ $lid != $rid ]]; then
         local cnt=$( git diff --name-only $h/$branch...HEAD | wc -l )
