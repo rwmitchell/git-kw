@@ -173,14 +173,18 @@ function gp() {
   }
   for h in $gr; do
     cline 4
-    local sch=$( git remote get-url $h | awk -F'[/:]' '{ print $1 }' )
-    local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
-    printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst"
+    local url=$( git remote get-url $h )
+    local sch=$( echo $url | awk -F'[/:]' '{ print $1 }' )
+    local hst=$( echo $url | awk -F'[/:]' '{ print $4 }' )
+    [[ -n $sch ]] && printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst" \
+                  || printf "Local : %s using %s\n" "$h" "$url"
     local rid=$( git rev-parse $h/$branch )
 
-    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+    [[ -n $sch ]] && ssh_ping -t 2 $hst # >2 /dev/null
     if [[ $sch > "" && $? != 0 ]]; then
       printf "Unable to ping %s\n" $hst
+    elif [[ ! -e $url ]]; then
+      printf "Not mounted: %s\n" $url
     else
 
       if [[ $lid != $rid ]]; then
