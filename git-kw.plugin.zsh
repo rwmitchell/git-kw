@@ -181,13 +181,13 @@ function gp() {
     local rid=$( git rev-parse $h/$branch )
 
     local err=0
-    [[ -n $sch ]] && {
+    if [[ -n $sch ]]; then
       ssh_ping -t 2 $hst;
       err=$?          # >2 /dev/null
       [[ $err -ne 0 ]] && printf "Unable to ping %s\n" $hst
-    } || {
+    else
       [[ ! -e $url ]] && {  printf "Not mounted: %s\n" $url; err=1 }
-    }
+    fi
 
     if [[ $err -eq 0 ]]; then
 
