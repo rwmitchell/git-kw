@@ -177,16 +177,16 @@ function gp() {
     local sch=$( echo $url | awk -F'[/:]' '{ print $1 }' )
     local hst=$( echo $url | awk -F'[/:]' '{ print $4 }' )
     [[ -n $sch ]] && printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst" \
-                  || printf "Local : %s using %s\n" "$h" "$url"
+                  || printf "Local : %s using %s\n"       "$h" "$url"
     local rid=$( git rev-parse $h/$branch )
 
     local err=0
     if [[ -n $sch ]]; then
-      ssh_ping -t 2 $hst;
+      ssh_ping -t 2 $hst
       err=$?          # >2 /dev/null
       [[ $err -ne 0 ]] && printf "Unable to ping %s\n" $hst
     else
-      [[ ! -e $url ]] && {  printf "Not mounted: %s\n" $url; err=1 }
+      [[ ! -e $url ]] && { printf "Not mounted: %s\n" $url; err=1 }
     fi
 
     if [[ $err -eq 0 ]]; then
@@ -261,14 +261,22 @@ function gpl() {
   local ts
   for h in $gr; do
     cline 4
-    local sch=$( git remote get-url $h | awk -F'[/:]' '{ print $1 }' )
-    local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
-    printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst"
+    local url=$( git remote get-url $h )
+    local sch=$( echo $url | awk -F'[/:]' '{ print $1 }' )
+    local hst=$( echo $url | awk -F'[/:]' '{ print $4 }' )
+    [[ -n $sch ]] && printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst" \
+                  || printf "Local : %s using %s\n"       "$h" "$url"
 
-    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
-    if [[ $sch > "" && $? != 0 ]]; then
-      printf "Unable to ping %s\n" $hst
+    local err=0
+    if [[ -n $sch ]]; then
+      ssh_ping -t 2 $hst # >2 /dev/null
+      err=$?
+      [[ $err -ne 0 ]] && printf "Unable to ping %s\n" $hst
     else
+      [[ ! -e $url ]] && { printf "Not mounted: %s\n" $url; err=1 }
+    fi
+
+    if [[ $err -eq 0 ]]; then
 
       local rid=($( git ls-remote $h HEAD ))
       rid=$rid[1]
