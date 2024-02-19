@@ -303,6 +303,69 @@ function gpl() {
 
   return $rc
 }
+function gpb() {                          # push bare repo
+  local rs;
+  rs=$( git rev-parse --is-bare-repository )
+  [[ $rs == "true" ]] || return 0
+
+  local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
+  local rc=0
+  local gr=($( git remote show ));
+  local lid=$( git rev-parse HEAD );
+
+  local th
+  [[ $# == 1 ]] && {
+    [[ ${gr[(ie)$1]} -le ${#gr} ]] && gr=($1) || {
+      printf "Invalid: %s\n" $1
+      return
+    }
+  }
+  for h in $gr; do
+    cline 4
+    local url=$( git remote get-url $h )
+    local sch=$( echo $url | awk -F'[/:]' '{ print $1 }' )
+    local hst=$( echo $url | awk -F'[/:]' '{ print $4 }' )
+    [[ -n $sch ]] && printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst" \
+                  || printf "Local : %s using %s\n"       "$h" "$url"
+    local rid=$( git rev-parse $h/$branch )
+
+    local err=0
+    if [[ -n $sch ]]; then
+      ssh_ping -t 2 $hst
+      err=$?          # >2 /dev/null
+      [[ $err -ne 0 ]] && printf "Unable to ping %s\n" $hst
+    else
+      [[ ! -e $url ]] && { printf "Not mounted: %s\n" $url; err=1 }
+    fi
+
+    if [[ $err -eq 0 ]]; then
+
+      if [[ $lid != $rid ]]; then
+        local cnt=$( git diff --name-only $h/$branch...HEAD | wc -l )
+        if [[ $cnt > 0 ]]; then
+          printf "Updating %d files on %s\n" "$cnt" "$h"
+          ssay "Updating $cnt files on $h!"
+          # Checking OLD/NEW here shows if there is an actual transfer
+  #       OLD_COMMIT=$( git rev-parse $h/$branch )
+          git push $mytags $h HEAD
+          th=$h
+  #       NEW_COMMIT=$( git rev-parse $h/$branch )
+          [[ $? == 0 ]] && ((rc+=1))
+        else
+          ssay "$h is current"
+        fi
+      else
+        ssay "$h matches local"
+      fi
+
+    fi     # HST is pingable
+
+  done
+
+  [[ $rc == 1 ]] && ssay "Pushed files to $th"
+  [[ $rc  > 1 ]] && ssay "Pushed files to $rc of $#gr hosts"
+  return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
+}
 
 # Git Check Remote - are remotes and local in-sync ?
 # 2023-04-12 does this do anything different for new fetch commits?
@@ -565,6 +628,85 @@ function gdr() {                             # check subdirs
   done
 }
 compdef _git gdr=git-diff
+
+function gfb() {          # fetch into bare repo
+  local rs;
+  rs=$( git rev-parse --is-bare-repository )
+  [[ $rs == "true" ]] || return 0
+
+  local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
+  local rc=0
+  local gr=($( git remote show ));
+  local lid=$( git rev-parse HEAD );
+
+  printf "repos: %s\n" "$gr"
+  repo=$gr[1];
+
+  local arg silent=0
+  for arg in $@; do
+    case $arg in
+      -s|--silent) (( silent+=1 ));;
+      -ss) (( silent+=2 ));;
+      -h|--help  )
+        printf "-s|--silent : (1) silence 'in sync' message\n"
+        printf "-s|--silent : (2) silence 'not in sync' message\n"
+        printf "Repos: %s\n" "$gr"
+        return;;
+      *) [[ ${gr[(ie)$arg]} -le ${#gr} ]] && repo=$arg || {
+        printf "Unexpected: %s\n" "$arg"
+        return
+      } ;;
+    esac
+  done
+
+  cline 4
+  local pth=$( git remote get-url $repo )
+  local sch=$( echo $pth | awk -F'[/:]' '{ print $1 }' )
+  local hst=$( echo $pth | awk -F'[/:]' '{ print $4 }' )
+  printf "Remote: %s using %s on %s\n" "$repo" "$sch" "$hst"
+  if [[ $pth == ssh* || -e $pth ]]; then
+
+    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+    if [[ $sch > "" && $? != 0 ]]; then
+      printf "Unable to ping %s\n" $hst
+    else
+
+      local rid=($( git ls-remote $repo $branch ))   # HEAD ))
+      rid=$rid[1]
+      if [[ $lid != $rid ]]; then
+        OLD_COMMIT=$( git rev-parse $repo/$branch )
+        git fetch $mytags $repo $branch  # HEAD
+        NEW_COMMIT=$( git rev-parse FETCH_HEAD )
+        printf "<%s>\n<%s> %s\n" "$lid" "$rid" "$repo"
+        git diff --name-only $OLD_COMMIT..$NEW_COMMIT    # show filenames
+        printf "\n"
+  #     git log HEAD...FETCH_HEAD
+        # determine which log approach is better
+        printf "git log %s/%s...FETCH_HEAD\n" "$repo" "$branch"
+        git log $repo/$branch...FETCH_HEAD
+        printf "\ngit lg HEAD...FETCH_HEAD\n"
+        git lg HEAD..FETCH_HEAD
+        printf "\n"
+        local cnt=$( git diff --name-only $OLD_COMMIT...$NEW_COMMIT | wc -l )
+        printf "%d files from %s\n" "$cnt" "$repo"
+        ssay "Got $cnt files from $repo for $rdir!"
+        # Checking OLD/NEW here shows if there is an actual transfer
+        ((rc+=1))
+      else
+        printf "%s matches %s\n" "$repo" "$branch"
+      [[ $silent < 1 ]] && ssay "$repo matches local"
+      fi
+    fi     # HST is pingable
+  else
+    printf "%s not available\n" $repo
+  fi
+
+
+  [[ $rc == 1 ]] && ssay "Fetched files from $repo"
+  [[ $rc  > 1 ]] && ssay "Fetched files from $rc hosts"
+  return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
+
+}
 
 function gir() {                             # check incoming dry-run
   setopt localoptions noautopushd nopushdignoredups
