@@ -266,6 +266,9 @@ function gpl() {
     local hst=$( echo $url | awk -F'[/:]' '{ print $4 }' )
     [[ -n $sch ]] && printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst" \
                   || printf "Local : %s using %s\n"       "$h" "$url"
+    local cnt=$( git rev-list --count $branch...$h/$branch )
+
+    [[ $cnt -gt 0 ]] && printf "Cnt: %2d (%s...%s/%s)\n" "$cnt" "$branch" "$h" "$branch"
 
     local err=0
     if [[ -n $sch ]]; then
