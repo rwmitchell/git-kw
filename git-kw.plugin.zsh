@@ -271,26 +271,28 @@ function gpl() {
     [[ $cnt -gt 0 ]] && printf "Cnt: %2d (%s...%s/%s)\n" "$cnt" "$branch" "$h" "$branch"
 
     local err=0
-    if [[ -n $sch ]]; then
-      ssh_ping -t 2 $hst # >2 /dev/null
-      err=$?
-      [[ $err -ne 0 ]] && printf "Unable to ping %s\n" $hst
-    else
-      [[ ! -e $url ]] && { printf "Not mounted: %s\n" $url; err=1 }
-    fi
+    # Do not need to verify host repo is reachable
+#   if [[ -n $sch ]]; then
+#     ssh_ping -t 2 $hst # >2 /dev/null
+#     err=$?
+#     [[ $err -ne 0 ]] && printf "Unable to ping %s\n" $hst
+#   else
+#     [[ ! -e $url ]] && { printf "Not mounted: %s\n" $url; err=1 }
+#   fi
 
     if [[ $err -eq 0 ]]; then
 
-      local rid=($( git ls-remote $h HEAD ))
-      rid=$rid[1]
-      if [[ $lid != $rid ]]; then
-        printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
-        printf "\n"
-        git diff --name-only HEAD..$h/$branch
-        printf "\n"
+#     local rid=($( git ls-remote $h HEAD ))
+#     rid=$rid[1]
+#     if [[ $lid != $rid ]]; then
+#       printf "<%s> %s\n<%s> %s\n" "$lid" "$root" "$rid" "$h"
+#       printf "\n"
+#       git diff --name-only HEAD..$h/$branch
+#       printf "\n"
         ts=$( git log --decorate=short --color HEAD...$h/$branch )
         if [[ $md5 != $( echo $ts | md5 ) ]]; then
           md5=$( echo $ts | md5 )
+          echo $md5
           echo $ts
         fi
   #     git log HEAD...FETCH_HEAD
@@ -299,7 +301,7 @@ function gpl() {
         ((rc+=1))
   #   else
   #     [[ $silent < 1 ]] && ssay "$h matches $root"
-      fi
+#     fi
 
     fi     # HST is pingable
   done
