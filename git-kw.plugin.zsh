@@ -16,9 +16,9 @@ alias -- glogw="is_git && git glog --since '1 week'"  # show past week commits
 # works great when there are commits to be pushed
 # else it shows the entire log
 # alias --  gpl="is_git && git glog HEAD...ORIG_HEAD"   # to-be-pushed log
-alias --   glm="is_git && git log HEAD..FETCH_HEAD"    # fetched log
-alias --   grv="is_git && git remote -v"  # show remotes with url
-alias --   gdu="is_git && git diff --stat --cached ORIG_HEAD"     # needs to be in a function
+alias --   glm="is_git  && git log HEAD..FETCH_HEAD"    # fetched log
+alias --   grv="is_bare && git remote -v"  # show remotes with url
+alias --   gdu="is_git  && git diff --stat --cached ORIG_HEAD"     # needs to be in a function
 alias --   gi="is_git && git fetch --dry-run -v"
 # These aliases match those in OMZ/plugins/git - START
 alias --   ga="is_git && git add"
