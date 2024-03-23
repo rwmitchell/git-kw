@@ -157,10 +157,10 @@ function gp() {
   git status > /dev/null  # only get result code or show error
   [[ $? == 0 ]] || return 0
 
-  local root=$( git rev-parse --show-toplevel )
+  local root=$(basename $( git rev-parse --show-toplevel ) )
   local branch=$( git_current_branch )    # defined in OMZ/lib/git.zsh
   local rc=0
-  echo $root
+  printf "Root: %s\n" $root
   local gr=($( git remote show ));
   local lid=$( git rev-parse HEAD );
 
@@ -181,7 +181,9 @@ function gp() {
     local rid=$( git rev-parse $h/$branch )
 
     local err=0
+    local lcl=true              # assume repo is local
     if [[ -n $sch ]]; then
+      lcl=false;
       ssh_ping -t 2 $hst
       err=$?          # >2 /dev/null
       [[ $err -ne 0 ]] && printf "Unable to ping %s\n" $hst
@@ -197,11 +199,18 @@ function gp() {
           printf "Updating %d files on %s\n" "$cnt" "$h"
           ssay "Updating $cnt files on $h!"
           # Checking OLD/NEW here shows if there is an actual transfer
-  #       OLD_COMMIT=$( git rev-parse $h/$branch )
+#         OLD_COMMIT=$( git rev-parse $h/$branch )
           git push $mytags $h HEAD
           th=$h
-  #       NEW_COMMIT=$( git rev-parse $h/$branch )
+#         NEW_COMMIT=$( git rev-parse $h/$branch )
           [[ $? == 0 ]] && ((rc+=1))
+
+          [[ $? == 0 && $lcl == true ]] && {
+            local log="/Volumes/$h/Log-$host".txt
+            printf "Local URL: %s\n" $url
+            printf "Local LOG: %s\n" $log
+            printf "%s\n" $root >> $log
+          }
         else
           ssay "$h is current"
         fi
