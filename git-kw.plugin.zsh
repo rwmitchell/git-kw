@@ -944,6 +944,18 @@ function ggrepd() {
 
   git log $FLW --patch -G"$PAT" $@
 }
+function ggrepdw() {
+  [[ $# == 0 || $@[(I)-h] -gt 0 ]] \
+    && printf "$0 REGEX FILE(s)\n" \
+    && printf "\tShow diffs for commit with REGEX\n" \
+    && return
+
+  local PAT=$1; shift;
+  local FLW=""
+  [[ $# -eq 1 ]] && FLW="--follow"
+
+  git log $FLW --patch -G"$PAT" $@ | dwdiff -u
+}
 compdef _git ggrep=git-log
 compdef _git ggreprgx=git-log
 compdef _git ggrepd=git-log
