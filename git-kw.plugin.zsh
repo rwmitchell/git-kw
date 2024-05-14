@@ -229,10 +229,11 @@ function gp() {
 compdef _gf gp
 
 function gpt() {
-  mytags="--tags --follow-tags"
+  mytags=("--tags" "--follow-tags")
   gp $@
   unset mytags
 }
+compdef _gf gpt
 
 # Git Show Commit to be pushed
 # 2023-04-12 same as gcr() with different log command
