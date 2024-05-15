@@ -51,7 +51,7 @@ function gltag() {
 }
 # to use to get commit date for applying to tags
 alias --   glgdt="git log --all --abbrev-commit --decorate \
-  --format=format:'%C(auto)%h|%C(bold blue)%ai%C(reset)|%s|%C(bold red)%d'"
+  --format=format:'%C(auto)%h|%C(bold blue)%ai%C(reset)|%s|%C(auto)%d'"
 
 function gl2tag() {      # show short log back to last tag
   # if defined as an alias, $(git describe) gets defined when sourcing this file
