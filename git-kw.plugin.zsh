@@ -23,6 +23,8 @@ alias --   gi="is_git && git fetch --dry-run -v"
 # These aliases match those in OMZ/plugins/git - START
 alias --   ga="is_git && git add"
 alias --  gau="is_git && git add --update"
+# from OMZ git.plugin.zsh
+alias --  gtl='gtl(){ git tag --sort=-v:refname -n --list "${1}*" }; noglob gtl'
 
 # 2023-05-25: remove --all from log output
 # without --all, log output starts with current HEAD
@@ -49,7 +51,7 @@ function gltag() {
 }
 # to use to get commit date for applying to tags
 alias --   glgdt="git log --all --abbrev-commit --decorate \
-  --format=format:'%C(auto)%h|%ai|%s|%d'"
+  --format=format:'%C(auto)%h|%C(bold blue)%ai%C(reset)|%s|%C(bold red)%d'"
 
 function gl2tag() {      # show short log back to last tag
   # if defined as an alias, $(git describe) gets defined when sourcing this file
