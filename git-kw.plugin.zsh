@@ -211,7 +211,9 @@ function gp() {
             local log="/Volumes/$h/Log-$host".txt
             printf "Local URL: %s\n" $url
             printf "Local LOG: %s\n" $log
-            printf "%s\n" $root >> $log
+            # put (local program) reads all stdin before opening output
+            grep -v $root $log | put $log    # remove previous entries
+            printf "%s %s\n" $(date +"%Y-%m-%d %H:%M")$root >> $log
           }
         else
           ssay "$h is current"
