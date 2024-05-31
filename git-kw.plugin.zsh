@@ -214,6 +214,8 @@ function gp() {
             # put (local program) reads all stdin before opening output
             grep -v $root $log | put $log    # remove previous entries
             printf "%s %s\n" "$(date +'%Y-%m-%d %H:%M')" $root >> $log
+            lbline 2
+            prism -Lw8 < $log
           }
         else
           ssay "$h is current"
