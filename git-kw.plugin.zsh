@@ -999,11 +999,28 @@ function gdwd() {     # Show git diff using dwdiff
 
   is_git || return
 
+  local prmpt rsp commit help
+  zparseopts -D -F -K p=prmpt c=cmmit h=help
+
+  [[ $help ]] && {
+    printf "Usage: %s [ -cph ]\n" "$0"
+    printf "\nUse dwdiff to compare changes to repo\n"
+    printf "\t-c : prompt to commit     for each file\n"
+    printf "\t-p : prompt to show diffs for each file\n"
+    return 0
+  }
+
   for file in $( git ls-files --modified $@ )
   do
 #   ( printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" $file; git difftool -y --tool=dwdiff $file ) # | $PAGER
+    [[ $prmpt ]] && rsp=$(prompt -e "show $file ?" "yY" "nN" "qa")
+    [[ "qa" == *$rsp* && $prmpt ]] && return 0
+    [[ "Yy" == *$rsp* || ! $prmpt ]] && \
     ( printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" $file; git diff $file | dwdiff -u) # | $PAGER
     lbline 2
+    [[ $cmmit ]] && rsp=$(prompt -e "Commit $file ?" "yY" "nN" "qa" )
+    [[ "qa" == *$rsp* && $cmmit ]] && return 0
+    [[ "Yy" == *$rsp* && $cmmit ]] && { printf "Committing $file\n"; gc $file }
   done # | mdless     # mdless parses comments, ie '#',  as header lines
 
 }
