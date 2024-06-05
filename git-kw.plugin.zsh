@@ -999,7 +999,7 @@ function gdwd() {     # Show git diff using dwdiff
 
   is_git || return
 
-  local prmpt rsp commit help
+  local prmpt rsp cmmit help
   zparseopts -D -F -K p=prmpt c=cmmit h=help
 
   [[ $help ]] && {
