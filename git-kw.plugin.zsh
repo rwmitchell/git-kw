@@ -258,7 +258,7 @@ function gflog() {
       done
     }
   done
-  return 0
+  re/turn 0
 }
 function gplog() {
   local gr=($( git remote show ));
@@ -268,6 +268,7 @@ function gplog() {
       local -a logs=($( echo /Volumes/$h/Log-*.txt ))
       local log
       for log in $logs; do
+        printf "Log: %s\n" $log
         prism -Lw8 < $log
         lbline 2
       done
