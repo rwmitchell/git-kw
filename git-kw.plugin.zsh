@@ -233,6 +233,47 @@ function gp() {
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
 compdef _gf gp
+function gflog() {
+  local gr=($( git remote show ));
+  local root=$(basename $( git rev-parse --show-toplevel ) )
+  for h in $gr; do
+    [[ -e /Volumes/$h ]] && {
+
+      local -a logs=($( echo /Volumes/$h/Log-*.txt ))
+      local log
+      for log in $logs; do
+        printf "Log: %s\n" $log
+        grep $root $log > /dev/null     # just to get status
+        [[ $? == 0 ]] && {
+          grep $root $log | prism -Lw8
+          rsp=$(prompt -e "Remove entry for $root" "yY" "nN" "qa")
+          case "$rsp" in
+            n)                  ;;    # skip
+            N|a|q) break        ;;    # skip and exit
+            y|Y)   printf "Removing %s\n" $root;
+                   grep -v $root $log | put $log    # remove previous entries
+          esac
+        }
+        lbline 2
+      done
+    }
+  done
+  return 0
+}
+function gplog() {
+  local gr=($( git remote show ));
+  for h in $gr; do
+    [[ -e /Volumes/$h ]] && {
+
+      local -a logs=($( echo /Volumes/$h/Log-*.txt ))
+      local log
+      for log in $logs; do
+        prism -Lw8 < $log
+        lbline 2
+      done
+    }
+  done
+}
 
 function gpt() {
   mytags=("--tags" "--follow-tags")
