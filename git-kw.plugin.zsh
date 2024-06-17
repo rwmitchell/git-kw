@@ -258,7 +258,7 @@ function gflog() {
       done
     }
   done
-  re/turn 0
+  return 0
 }
 function gplog() {
   local gr=($( git remote show ));
