@@ -692,6 +692,26 @@ function gdr() {                             # check subdirs
 }
 compdef _git gdr=git-diff
 
+function gdcs() {                # diff commits sequentially }
+  local ahash=($( git log --abbrev-commit --oneline $@ | awk '{print $1}' ))
+  local phash=$ahash[1];
+  local hash rsp prmpt=1
+
+  printf "%3d commits\n" ${#ahash[@]}
+
+  for hash in ${ahash[@]:1}; do    # walk thru array starting on second element
+#   [[ $prmpt ]] &&
+    rsp=$(prompt -e "diff $phash $hash?" "yY" "nN" "qa")
+    printf "Response: >%s<\n" $rsp
+    [[ "qa" == *$rsp* && $prmpt ]] && printf "ABORT!!!\n" && return 0
+    [[ "Yy" == *$rsp* || ! $prmpt ]] && {
+      printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" "$phash -> $hash";
+      git diff $phash $hash $@ | dwdiff -u
+    }
+    phash=$hash
+  done
+}
+
 function gfb() {          # fetch into bare repo
   local rs;
   rs=$( git rev-parse --is-bare-repository )
