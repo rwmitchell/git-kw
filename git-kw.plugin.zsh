@@ -208,7 +208,10 @@ function gp() {
           [[ $? == 0 ]] && ((rc+=1))
 
           [[ $? == 0 && $lcl == true ]] && {
-            local log="/Volumes/$h/Log-$host".txt
+#           local log="/Volumes/$h/Log-$host".txt
+            # remove everything after /git/ subdir
+            # append log filename
+            local log="${url%%/git/*}/Log-$host".txt
             printf "Local URL: %s\n" $url
             printf "Local LOG: %s\n" $log
             # put (local program) reads all stdin before opening output
