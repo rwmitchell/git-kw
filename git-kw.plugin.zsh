@@ -705,8 +705,11 @@ function gdcs() {                # diff commits sequentially }
   for hash in ${ahash[@]:1}; do    # walk thru array starting on second element
 #   [[ $prmpt ]] &&
     dt=$( git show -s --date=format:'%Y-%m-%d %H:%M' --format=%cd $phash )
-    su=$( git log --pretty=format:"%s" $phash -n 1 )
-    rsp=$(prompt -e "log  $dt: $su?" "yY" "nN" "qa")
+    su=$( git log --pretty=format:"%s" $phash -n 1 )         # get commit subject
+    fn=($( git show --name-only --pretty=format: $phash ))   # get commit filenames
+#   fn=$( git show --name-only --pretty=format:"%s" $phash ) # get commit filenames+subj
+    printf "File: %s\n" $fn[@]
+    rsp=$(prompt -e "log $dt: $su ?" "yY" "nN" "qa")
     [[ "qa" == *$rsp* && $prmpt ]] && printf "ABORT!!!\n" && return 0
     [[ "Yy" == *$rsp* || ! $prmpt ]] && {
 #     printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" "$phash -> $hash";
@@ -714,14 +717,16 @@ function gdcs() {                # diff commits sequentially }
       git glog $phash -n 1
       lbline 1
     }
-    rsp=$(prompt -e "diff $dt: $hash $phash?" "yY" "nN" "qa")
-    [[ "qa" == *$rsp* && $prmpt ]] && printf "ABORT!!!\n" && return 0
-    [[ "Yy" == *$rsp* || ! $prmpt ]] && {
-      # reversing order colorizes red-delete green-add properly
-      lbline 1
-      git diff $hash $phash $@ | dwdiff -u
-      yline 2
-    }
+    for file in ${fn[@]}; do
+      rsp=$(prompt -e "diff $file: $hash $phash?" "yY" "nN" "qa")
+      [[ "qa" == *$rsp* && $prmpt ]] && printf "ABORT!!!\n" && return 0
+      [[ "Yy" == *$rsp* || ! $prmpt ]] && {
+        # reversing order colorizes red-delete green-add properly
+        lbline 1
+        git diff $hash $phash $file | dwdiff -u
+      }
+    done
+    yline 2
     phash=$hash
   done
 }
