@@ -705,11 +705,15 @@ function gdcs() {                # diff commits sequentially }
   for hash in ${ahash[@]:1}; do    # walk thru array starting on second element
 #   [[ $prmpt ]] &&
     rsp=$(prompt -e "diff $phash $hash?" "yY" "nN" "qa")
-    printf "Response: >%s<\n" $rsp
+#   printf "Response: >%s<\n" $rsp
     [[ "qa" == *$rsp* && $prmpt ]] && printf "ABORT!!!\n" && return 0
     [[ "Yy" == *$rsp* || ! $prmpt ]] && {
       printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" "$phash -> $hash";
+      lbline 1
+      git log $phash...$hash
+      lbline 1
       git diff $phash $hash $@ | dwdiff -u
+      yline 2
     }
     phash=$hash
   done
@@ -1098,7 +1102,7 @@ function gla() {     # Show last git log for each file
   do
     glog -1 $file
     lbline 2
-  done | mdless                    # mdless allows inline images
+  done | mdless -I                 # mdless allows lbline inline image
 
 }
 compdef _git gla=git-log
