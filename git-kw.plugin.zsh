@@ -705,15 +705,20 @@ function gdcs() {                # diff commits sequentially }
   for hash in ${ahash[@]:1}; do    # walk thru array starting on second element
 #   [[ $prmpt ]] &&
     dt=$( git show -s --date=format:'%Y-%m-%d %H:%M' --format=%cd $phash )
-    rsp=$(prompt -e "diff $dt: $phash $hash?" "yY" "nN" "qa")
-#   printf "Response: >%s<\n" $rsp
+    su=$( git log --pretty=format:"%s" $phash -n 1 )
+    rsp=$(prompt -e "log  $dt: $su?" "yY" "nN" "qa")
     [[ "qa" == *$rsp* && $prmpt ]] && printf "ABORT!!!\n" && return 0
     [[ "Yy" == *$rsp* || ! $prmpt ]] && {
-      printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" "$phash -> $hash";
+#     printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" "$phash -> $hash";
       lbline 1
       git glog $phash -n 1
       lbline 1
+    }
+    rsp=$(prompt -e "diff $dt: $hash $phash?" "yY" "nN" "qa")
+    [[ "qa" == *$rsp* && $prmpt ]] && printf "ABORT!!!\n" && return 0
+    [[ "Yy" == *$rsp* || ! $prmpt ]] && {
       # reversing order colorizes red-delete green-add properly
+      lbline 1
       git diff $hash $phash $@ | dwdiff -u
       yline 2
     }
