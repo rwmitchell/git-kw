@@ -1080,8 +1080,8 @@ function gdwd() {     # Show git diff using dwdiff
 
   is_git || return
 
-  local prmpt rsp cmmit help
-  zparseopts -D -F -K p=prmpt a=all c=cmmit h=help
+  local prmpt rsp all cmmit help
+  zparseopts -D -E -K p=prmpt a=all c=cmmit h=help
 
   [[ $help ]] && {
     printf "Usage: %s [ -cph ]\n" "$0"
