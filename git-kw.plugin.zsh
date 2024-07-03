@@ -166,13 +166,16 @@ function gp() {
   local gr=($( git remote show ));
   local lid=$( git rev-parse HEAD );
 
-  local th
-  [[ $# == 1 ]] && {
-    [[ ${gr[(ie)$1]} -le ${#gr} ]] && gr=($1) || {
-      printf "Invalid: %s\n" $1
+  local th arg tgr=()
+  for arg in $@; do
+    # verify user supplied repos exist in list
+    [[ ${gr[(ie)$arg]} -le ${#gr} ]] && tgr+=($arg) || {
+      printf "Invalid: %s\n" $arg
       return
     }
-  }
+  done
+  [[ $# -gt 0 ]] && gr=($tgr)
+
   for h in $gr; do
     cline 4
     local url=$( git remote get-url $h )
