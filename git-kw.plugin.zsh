@@ -264,6 +264,7 @@ function gflog() {
       done
     }
   done
+  gplog
   return 0
 }
 function gplog() {
