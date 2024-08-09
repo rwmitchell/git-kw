@@ -190,7 +190,7 @@ function gp() {
     if [[ -n $sch ]]; then
       lcl=false;
       ssh_ping -t 2 $hst
-      err=$?          # >2 /dev/null
+      err=$?          # 2> /dev/null
       [[ $err -ne 0 ]] && printf "Unable to ping %s\n" $hst
     else
       [[ ! -e $url ]] && { printf "Not mounted: %s\n" $url; err=1 }
@@ -338,7 +338,7 @@ function gpl() {
     local err=0
     # Do not need to verify host repo is reachable
 #   if [[ -n $sch ]]; then
-#     ssh_ping -t 2 $hst # >2 /dev/null
+#     ssh_ping -t 2 $hst # 2> /dev/null
 #     err=$?
 #     [[ $err -ne 0 ]] && printf "Unable to ping %s\n" $hst
 #   else
@@ -402,7 +402,7 @@ function gpb() {                          # push bare repo
     local err=0
     if [[ -n $sch ]]; then
       ssh_ping -t 2 $hst
-      err=$?          # >2 /dev/null
+      err=$?          # 2> /dev/null
       [[ $err -ne 0 ]] && printf "Unable to ping %s\n" $hst
     else
       [[ ! -e $url ]] && { printf "Not mounted: %s\n" $url; err=1 }
@@ -466,7 +466,7 @@ function gcr() {
     local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
     printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst"
 
-    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+    [[ $sch > "" ]] && ssh_ping -t 2 $hst # 2> /dev/null
     if [[ $sch > "" && $? != 0 ]]; then
       printf "Unable to ping %s\n" $hst
     else
@@ -538,7 +538,7 @@ function gfa() {
     pth=$( git remote get-url $h )
     if [[ $pth == ssh* || -e $pth ]]; then
 
-      [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+      [[ $sch > "" ]] && ssh_ping -t 2 $hst # 2> /dev/null
       if [[ $sch > "" && $? != 0 ]]; then
         printf "Unable to ping %s\n" $hst
       else
@@ -626,7 +626,7 @@ function gf() {
   pth=$( git remote get-url $repo )
   if [[ $pth == ssh* || -e $pth ]]; then
 
-    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+    [[ $sch > "" ]] && ssh_ping -t 2 $hst # 2> /dev/null
     if [[ $sch > "" && $? != 0 ]]; then
       printf "Unable to ping %s\n" $hst
     else
@@ -772,7 +772,7 @@ function gfb() {          # fetch into bare repo
   printf "Remote: %s using %s on %s\n" "$repo" "$sch" "$hst"
   if [[ $pth == ssh* || -e $pth ]]; then
 
-    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+    [[ $sch > "" ]] && ssh_ping -t 2 $hst # 2> /dev/null
     if [[ $sch > "" && $? != 0 ]]; then
       printf "Unable to ping %s\n" $hst
     else
@@ -945,7 +945,7 @@ function gps() {         # git push status - show files to be pushed
     local hst=$( git remote get-url $h | awk -F'[/:]' '{ print $4 }' )
     printf "Remote: %s using %s on %s\n" "$h/$branch" "$sch" "$hst"
 
-    [[ $sch > "" ]] && ssh_ping -t 2 $hst # >2 /dev/null
+    [[ $sch > "" ]] && ssh_ping -t 2 $hst # 2> /dev/null
     if [[ $sch > "" && $? != 0 ]]; then
       printf "Unable to ping %s\n" $hst
     else
@@ -1084,8 +1084,8 @@ function gdwd() {     # Show git diff using dwdiff
 
   is_git || return
 
-  local prmpt rsp all cmmit help
-  zparseopts -D -E -K p=prmpt a=all c=cmmit h=help
+  local prmpt rsp all cmmit quiet help
+  zparseopts -D -E -K p=prmpt a=all c=cmmit q=quiet h=help
 
   [[ $help ]] && {
     printf "Usage: %s [ -cph ]\n" "$0"
@@ -1098,6 +1098,36 @@ function gdwd() {     # Show git diff using dwdiff
 
   files=($( git ls-files --modified $@ ))
 
+  printf "%3d Files\n" $#files
+  printf "\t%s\n" $files
+
+  [[ $#files -gt 1 ]] && prmpt=1   # arbitrary limit of 2^H1, else use -q
+
+  [[ $quiet ]] && {                # Quickly show diffs for all files
+    for file in $files; do
+      ( printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" $file; git diff $file | dwdiff -u )
+      lbline 2
+    done
+    return 0
+  }
+
+  [[ $cmmit || $all ]] || {
+
+    rsp=$(prompt -e "Commit files ?" "yY" "nN" "qa" )
+    [[ "Yy" == *$rsp* ]] && cmmit=1
+    [[ "qa" == *$rsp* ]] && return 0
+
+    [[ $cmmit && $prmpt ]] && {
+      rsp=$(prompt -e "Commit all files together ?" "yY" "nN" "qa" )
+      [[ "Yy" == *$rsp* ]] && all=1
+      [[ "qa" == *$rsp* ]] && return 0
+      rsp=$(prompt -e "Commit files now ?" "yY" "nN" "qa" )
+      [[ "Yy" == *$rsp* ]] && { printf "Committing $files\n"; gc $files 2>&1 > /dev/null &; unset cmmit }
+      [[ "qa" == *$rsp* ]] && return 0
+    }
+
+  }
+
   [[ $all ]] && {
     for file in $files; do
       rsp=$(prompt -e "show $file ?" "yY" "nN" "qa")
@@ -1106,7 +1136,7 @@ function gdwd() {     # Show git diff using dwdiff
         ( printf ">>>\e[1m\e[38;5;6m %s \e[0m<<<\n\n" $file; git diff $file | dwdiff -u)
     done
     rsp=$(prompt -e "Commit $files ?" "yY" "nN" "qa" )
-    [[ "Yy" == *$rsp* ]] && { printf "Committing $file\n"; gc $files }
+    [[ "Yy" == *$rsp* ]] && { printf "Committing $files\n"; gc $files }
 
   }
 
@@ -1123,9 +1153,9 @@ function gdwd() {     # Show git diff using dwdiff
       [[ "Yy" == *$rsp* && $cmmit ]] && { printf "Committing $file\n"; gc $file }
     done # | mdless     # mdless parses comments, ie '#',  as header lines
 
-    [[ "Yy" == *$rsp* ]] && return 0 || return 1
-
   }
+
+  [[ "Yy" == *$rsp* ]] && return 0 || return 1
 
 }
 compdef _git gdwd=git-diff
