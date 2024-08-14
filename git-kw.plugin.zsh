@@ -220,6 +220,7 @@ function gp() {
             # put (local program) reads all stdin before opening output
             grep -v $root $log | put $log    # remove previous entries
             printf "%s %s\n" "$(date +'%Y-%m-%d %H:%M')" $root >> $log
+            _gp_update
             lbline 2
             prism -Lw8 < $log
           }
@@ -239,6 +240,31 @@ function gp() {
   return 0    # $rc   # 2022-12-02 stop zsh from announcing error code
 }
 compdef _gf gp
+function _gp_update () {
+
+  local url=$( git remote get-url GitRepo )
+# local url="."                                # Test file
+  local msg="${url%%/git/*}/Msg-$host".txt
+  local hsh="$(git rev-parse HEAD)"
+  printf "MSG: %s\n" $msg
+# printf "HSH: >%s<\n" $hsh
+
+# Testing lines #
+# printf "=======\n"
+# [[ -e $msg  ]] && tr '\n' 'X' < $msg | hl X
+# printf "=======\n"
+
+  # remove old entry - this is to keep multiple runs from stacking
+  [[ -e $msg  ]] && tr '\n' '\a' < $msg | sed "s|<${hsh}>.*</${hsh}>||g" | tr '\a' '\n' | put $msg
+
+  # add    new entry
+  printf "<%s>\n"    $hsh   >> $msg
+  printf "\n%s\n\n"  $(pwd) >> $msg
+  git log -1                >> $msg
+  printf "\n</%s>\n" $hsh   >> $msg
+
+}
+
 function gflog() {
   local gr=($( git remote show ));
   local root=$(basename $( git rev-parse --show-toplevel ) )
