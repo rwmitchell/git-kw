@@ -181,8 +181,8 @@ function gp() {
     local url=$( git remote get-url $h )
     local sch=$( echo $url | awk -F'[/:]' '{ print $1 }' )
     local hst=$( echo $url | awk -F'[/:]' '{ print $4 }' )
-    [[ -n $sch ]] && printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst" \
-                  || printf "Local : %s using %s\n"       "$h" "$url"
+    [[ -n $sch ]] && printf "%s Remote: %s using %s on %s\n" "$0" "$h" "$sch" "$hst" \
+                  || printf "%s Local : %s using %s\n"       "$0" "$h" "$url"
     local rid=$( git rev-parse $h/$branch )
 
     local err=0
@@ -210,10 +210,9 @@ function gp() {
 #         NEW_COMMIT=$( git rev-parse $h/$branch )
           [[ $? == 0 ]] && ((rc+=1))
 
-          [[ $? == 0 && $lcl == true ]] && {
-#           local log="/Volumes/$h/Log-$host".txt
-            # remove everything after /git/ subdir
-            # append log filename
+          [[ $? == 0 && $lcl == true ]] && {             # IF   we had something to push
+            # remove everything after /git/ subdir       # AND  repo is local
+            # append log filename                        # THEN create a log and msg file
             local log="${url%%/git/*}/Log-$host".txt
             printf "Local URL: %s\n" $url
             printf "Local LOG: %s\n" $log
@@ -307,6 +306,7 @@ function gplog() {
       done
     }
   done
+  [[ $#gr -gt 0 ]] && return 0 || return 1
 }
 
 function gpt() {
@@ -355,8 +355,8 @@ function gpl() {
     local url=$( git remote get-url $h )
     local sch=$( echo $url | awk -F'[/:]' '{ print $1 }' )
     local hst=$( echo $url | awk -F'[/:]' '{ print $4 }' )
-    [[ -n $sch ]] && printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst" \
-                  || printf "Local : %s using %s\n"       "$h" "$url"
+    [[ -n $sch ]] && printf "%s Remote: %s using %s on %s\n" "$0" "$h" "$sch" "$hst" \
+                  || printf "%s Local : %s using %s\n"       "$0" "$h" "$url"
     local cnt=$( git rev-list --count $branch...$h/$branch )
 
     [[ $cnt -gt 0 ]] && printf "Cnt: %2d (%s...%s/%s)\n" "$cnt" "$branch" "$h" "$branch"
@@ -421,8 +421,8 @@ function gpb() {                          # push bare repo
     local url=$( git remote get-url $h )
     local sch=$( echo $url | awk -F'[/:]' '{ print $1 }' )
     local hst=$( echo $url | awk -F'[/:]' '{ print $4 }' )
-    [[ -n $sch ]] && printf "Remote: %s using %s on %s\n" "$h" "$sch" "$hst" \
-                  || printf "Local : %s using %s\n"       "$h" "$url"
+    [[ -n $sch ]] && printf "%s Remote: %s using %s on %s\n" "$0" "$h" "$sch" "$hst" \
+                  || printf "%s Local : %s using %s\n"       "$0" "$h" "$url"
     local rid=$( git rev-parse $h/$branch )
 
     local err=0
