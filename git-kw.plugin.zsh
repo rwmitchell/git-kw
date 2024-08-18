@@ -257,10 +257,24 @@ function _gp_update () {
   [[ -e $msg  ]] && tr '\n' '\a' < $msg | sed "s|<${hsh}>.*</${hsh}>||g" | tr '\a' '\n' | put $msg
 
   # add    new entry
-  printf "<%s>\n"    $hsh   >> $msg
-  printf "\n%s\n\n"  $(pwd) >> $msg
-  git log -1                >> $msg
-  printf "\n</%s>\n" $hsh   >> $msg
+  printf "<%s>\n\n"     $hsh   >> $msg
+  printf "REPO: %s\n"   $url   >> $msg
+  printf "PWD : %s\n\n" $(pwd) >> $msg
+  git log -1                   >> $msg
+  printf "\n</%s>\n"    $hsh   >> $msg
+
+}
+
+function gp_del_hash() {     # remove hash record from file
+  local file=$1
+  [[ ! -e $file ]] && printf "%s does not exist, exiting\n" $file && return -1
+  shift     # pop file off list
+
+  foreach hsh in $@; do
+    printf "HASH: %s\n" $hsh
+#   tr '\n' '\a' < $file | sed -n "s|<${hsh}>.*</${hsh}>|FOO|p" | tr '\a' '\n'
+    tr '\n' '\a' < $file | sed -n "s|<${hsh}>.*</${hsh}>||p" | tr '\a' '\n' | put $file
+  done
 
 }
 
