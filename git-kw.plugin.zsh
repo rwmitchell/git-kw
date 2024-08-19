@@ -241,8 +241,8 @@ function gp() {
 compdef _gf gp
 function _gp_update () {
 
-  local url=$( git remote get-url GitRepo )
 # local url="."                                # Test file
+  local url=$( git remote get-url GitRepo )
   local msg="${url%%/git/*}/Msg-$host".txt
   local hsh="$(git rev-parse HEAD)"
   printf "MSG: %s\n" $msg
@@ -277,6 +277,90 @@ function gp_del_hash() {     # remove hash record from file
   done
 
 }
+function gp_show_msg() {                # show repo logs from Msg-*.txt
+  local url=$( git remote get-url GitRepo )
+  local vol="${url%%/git/*}"
+  local lmsg="$vol/Msg-$host".txt
+
+# printf "VOL: %s\n" "$vol"
+# printf "URL: %s\n" "$url"
+# printf "MSG: %s\n" "$lmsg"
+
+# printf "\n"
+
+  foreach msg in $vol/Msg-*.txt; do
+# printf "MSG: %s\n" "$msg"
+#   [[ $msg != $lmsg ]] && printf "REM: %s\n" "$msg" || printf "LOC: %s\n" "$msg"
+
+    [[ $msg != $lmsg ]] && {         # only show remote Msg files
+      # split records into lines then search for matching url
+      # sed needs 2 patterns to match when only one entry exists
+      # | sed -n 's|><|>\n<|gp;s|<|\n<\n|p' \
+      # | sed -n 's|><|>\n<|gp;s|\(<.*$\)|\n\1\n|p;' \
+      # | sed -n 's|\(<.*$\)|\n\1\n|p;s|><|>\n<|gp;' \
+
+      local cnt=$(grep '</' $msg | wc -l)
+      [[ $cnt == 1 ]] && {
+
+#         No need to rewrite the record boundaries, there be only one
+#         | sed -n 's|<|\n<|p' \
+        tr '\n' '\a' < $msg \
+          | grep $url \
+          | tr '\a' '\n' | egrep -v "REPO:|PWD :|Author"
+      } || {
+        tr '\n' '\a' < $msg \
+          | sed -n 's|><|>\n<|gp' \
+          | grep $url \
+          | tr '\a' '\n' | egrep -v "REPO:|PWD :|Author"
+
+      }
+    }
+  done
+  return 0
+
+}
+
+function gp_del_msg() {                # show repo logs from Msg-*.txt
+  local url=$( git remote get-url GitRepo )
+  local vol="${url%%/git/*}"
+  local lmsg="$vol/Msg-$host".txt
+
+# printf "VOL: %s\n" "$vol"
+# printf "URL: %s\n" "$url"
+# printf "MSG: %s\n" "$lmsg"
+
+# printf "\n"
+
+  foreach msg in $vol/Msg-*.txt; do
+# printf "MSG: %s\n" "$msg"
+#   [[ $msg != $lmsg ]] && printf "REM: %s\n" "$msg" || printf "LOC: %s\n" "$msg"
+
+    [[ $msg != $lmsg ]] && {         # only show remote Msg files
+
+      # split records into lines then search for matching url
+      # sed needs 2 patterns to match when only one entry exists
+      # | sed -n 's|><|>\n<|gp;s|<|\n<\n|p' \
+      # | sed -n 's|><|>\n<|gp;s|\(<.*$\)|\n\1\n|p;' \
+      # | sed -n 's|\(<.*$\)|\n\1\n|p;s|><|>\n<|gp;' \
+      # | sed -n 's|<|\n<|p' \
+
+      local cnt=$(grep '</' $msg | wc -l)
+      [[ $cnt == 1 ]] && {
+        tr '\n' '\a' < $msg \
+          | grep -v $url \
+          | tr '\a' '\n' | put $msg
+      } || {
+        tr '\n' '\a' < $msg \
+          | sed -n 's|><|>\n<|gp' \
+          | grep -v $url \
+          | tr '\a' '\n' | put $msg
+
+      }
+    }
+  done
+  return 0
+
+}
 
 function gflog() {
   local gr=($( git remote show ));
@@ -297,6 +381,7 @@ function gflog() {
             N|a|q) break        ;;    # skip and exit
             y|Y)   printf "Removing %s\n" $root;
                    grep -v $root $log | put $log    # remove previous entries
+                   gp_del_msg                       # remove commit messages
           esac
         }
         lbline 2
@@ -318,6 +403,7 @@ function gplog() {
         prism -Lw8 < $log
         lbline 2
       done
+      gp_show_msg
     }
   done
   [[ $#gr -gt 0 ]] && return 0 || return 1
