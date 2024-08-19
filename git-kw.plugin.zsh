@@ -278,6 +278,9 @@ function gp_del_hash() {     # remove hash record from file
 
 }
 function gp_show_msg() {                # show repo logs from Msg-*.txt
+  local all help
+  zparseopts -D -E -K a=all h=help
+
   local url=$( git remote get-url GitRepo )
   local vol="${url%%/git/*}"
   local lmsg="$vol/Msg-$host".txt
@@ -292,7 +295,7 @@ function gp_show_msg() {                # show repo logs from Msg-*.txt
 # printf "MSG: %s\n" "$msg"
 #   [[ $msg != $lmsg ]] && printf "REM: %s\n" "$msg" || printf "LOC: %s\n" "$msg"
 
-    [[ $msg != $lmsg ]] && {         # only show remote Msg files
+    [[ $all || $msg != $lmsg ]] && {         # only show remote Msg files
       # split records into lines then search for matching url
       # sed needs 2 patterns to match when only one entry exists
       # | sed -n 's|><|>\n<|gp;s|<|\n<\n|p' \
@@ -365,6 +368,11 @@ function gp_del_msg() {                # show repo logs from Msg-*.txt
 function gflog() {
   local gr=($( git remote show ));
   local root=$(basename $( git rev-parse --show-toplevel ) )
+
+  local url=$( git remote get-url GitRepo )
+  local vol="${url%%/git/*}"
+  local llog="$vol/Log-$host".txt
+
   for h in $gr; do
     [[ -e /Volumes/$h ]] && {
 
@@ -375,23 +383,31 @@ function gflog() {
         grep $root $log > /dev/null     # just to get status
         [[ $? == 0 ]] && {
           grep $root $log | prism -Lw8
-          rsp=$(prompt -e "Remove entry for $root" "yY" "nN" "qa")
-          case "$rsp" in
-            n)                  ;;    # skip
-            N|a|q) break        ;;    # skip and exit
-            y|Y)   printf "Removing %s\n" $root;
-                   grep -v $root $log | put $log    # remove previous entries
-                   gp_del_msg                       # remove commit messages
-          esac
+          [[ $llog != $log ]] && {
+
+            rsp=$(prompt -e "Remove entry for $root" "yY" "nN" "qa")
+            case "$rsp" in
+              n)                  ;;    # skip
+              N|a|q) break        ;;    # skip and exit
+              y|Y)   printf "Removing %s\n" $root;
+                     grep -v $root $log | put $log    # remove previous entries
+                     gp_del_msg                       # remove commit messages
+            esac
+
+          } || gp_show_msg -a
         }
         lbline 2
       done
     }
   done
-  gplog
+# gplog -l
   return 0
 }
 function gplog() {
+
+  local lcl help
+  zparseopts -D -E -K l=lcl h=help
+
   local gr=($( git remote show ));
   for h in $gr; do
     [[ -e /Volumes/$h ]] && {
@@ -403,7 +419,7 @@ function gplog() {
         prism -Lw8 < $log
         lbline 2
       done
-      gp_show_msg
+      [[ $lcl ]] && gp_show_msg || gp_show_msg -a
     }
   done
   [[ $#gr -gt 0 ]] && return 0 || return 1
