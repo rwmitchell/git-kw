@@ -1263,9 +1263,11 @@ function gdwd() {     # Show git diff using dwdiff
       rsp=$(prompt -e "Commit all files together ?" "yY" "nN" "qa" )
       [[ "Yy" == *$rsp* ]] && all=1
       [[ "qa" == *$rsp* ]] && return 0
-      rsp=$(prompt -e "Commit files now ?" "yY" "nN" "qa" )
-      [[ "Yy" == *$rsp* ]] && { printf "Committing $files\n"; gc $files 2>&1 > /dev/null &; unset cmmit }
-      [[ "qa" == *$rsp* ]] && return 0
+      [[ $all ]] && {
+        rsp=$(prompt -e "Commit files now ?" "yY" "nN" "qa" )
+        [[ "Yy" == *$rsp* ]] && { printf "Committing $files\n"; gc $files 2>&1 > /dev/null &; unset cmmit }
+        [[ "qa" == *$rsp* ]] && return 0
+      }
     }
 
   }
