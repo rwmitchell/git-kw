@@ -308,13 +308,13 @@ function gp_show_msg() {                # show repo logs from Msg-*.txt
 #         No need to rewrite the record boundaries, there be only one
 #         | sed -n 's|<|\n<|p' \
         tr '\n' '\a' < $msg \
-          | grep $url \
-          | tr '\a' '\n' | egrep -v "REPO:|PWD :|Author"
+          | command grep $url \
+          | tr '\a' '\n' | command grep -v -e "REPO:|PWD :|Author" | hl "REPO:.*$|PWD.*$" -n -G "commit.*$|Auth.*$|^<.*>$" -z -c "Date.*$" -y "^.*$"
       } || {
         tr '\n' '\a' < $msg \
           | sed -n 's|><|>\n<|gp' \
-          | grep $url \
-          | tr '\a' '\n' | egrep -v "REPO:|PWD :|Author"
+          | command grep $url \
+          | tr '\a' '\n' | command grep -v -e "REPO:|PWD :|Author" | hl "REPO:.*$|PWD.*$" -n -G "commit.*$|Auth.*$|^<.*>$" -z -c "Date.*$" -y "^.*$"
 
       }
     }
