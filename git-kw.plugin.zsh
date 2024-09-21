@@ -205,7 +205,8 @@ function gp() {
           ssay "Updating $cnt files on $h!" | hl "^.*$"
           # Checking OLD/NEW here shows if there is an actual transfer
 #         OLD_COMMIT=$( git rev-parse $h/$branch )
-          git push $mytags $h HEAD 2>&1 | hl -c "To .*$" -n -G "Enum.*$|Count.*$|Delta.*$|Comp.*$|Writ.*$"
+          # hl is removing everything not cyan, why??  Swapping order
+          git push $mytags $h HEAD 2>&1 | hl -n -G "^Enum.*$|^Count.*$|^Delta.*$|^Comp.*$|^Writ.*$" -z -c "^To.*$"
           th=$h
 #         NEW_COMMIT=$( git rev-parse $h/$branch )
           [[ $? == 0 ]] && ((rc+=1))
