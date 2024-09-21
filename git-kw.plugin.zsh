@@ -202,10 +202,10 @@ function gp() {
         local cnt=$( git diff --name-only $h/$branch...HEAD | wc -l )
         if [[ $cnt > 0 ]]; then
           printf "Updating %d files on %s\n" "$cnt" "$h"
-          ssay "Updating $cnt files on $h!"
+          ssay "Updating $cnt files on $h!" | hl "^.*$"
           # Checking OLD/NEW here shows if there is an actual transfer
 #         OLD_COMMIT=$( git rev-parse $h/$branch )
-          git push $mytags $h HEAD
+          git push $mytags $h HEAD | hl -c "To .*$" -n -G "Enum.*$|Count.*$|Delta.*$|Comp.*$|Writ.*$"
           th=$h
 #         NEW_COMMIT=$( git rev-parse $h/$branch )
           [[ $? == 0 ]] && ((rc+=1))
