@@ -1253,6 +1253,8 @@ function gdwd() {     # Show git diff using dwdiff
     return 0
   }
 
+  [[ $#files == 0 ]] && return 0
+
   [[ $cmmit || $all ]] || {
 
     rsp=$(prompt -e "Commit files ?" "yY" "nN" "qa" )
